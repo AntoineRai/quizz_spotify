@@ -3,38 +3,32 @@ require('dotenv').config();
 const express = require('express');
 const querystring = require('querystring');
 const request = require('request');
+const mongoose = require("mongoose");
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const mysql = require('mysql');
 
+const userModel = require('../models/thematicModel');
+const thematicModel = require('../models/thematicModel');
+const mongoString = process.env.DATABASE_URL;
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI;
-//mise en place des variables d'environnement pour la base de données
-const bdd_host = process.env.BDD_HOST;
-const bdd_user = process.env.BDD_USER;
-const bdd_password = process.env.BDD_PASSWORD;
-const bdd_name = process.env.BDD_NAME;
+
+mongoose.connect(mongoString);
+const database = mongoose.connection
+
+database.on('error', (error) => {
+  console.log(error)
+})
+
+database.once('connected', () => {
+  console.log('Database Connected');
+})
 
 const app = express();
 app.use(cookieParser());
 app.use(cors());
-
-// Connexion à la base de données MySQL
-const connection = mysql.createConnection({
-  host: bdd_host,
-  user: bdd_user,
-  password: bdd_password,
-  database: bdd_name,
-});
-
-connection.connect((err) => {
-  if (err) {
-    console.error('Erreur de connexion à la base de données :', err);
-  } else {
-    console.log('Connexion à la base de données réussie !');
-  }
-});
+app.use(express.json());
 
 const generateRandomString = (length) => {
   let result = '';
@@ -102,7 +96,7 @@ app.get('/callback', (req, res) => {
   }
 });
 
-app.get('/profile', (req, res) => {
+app.get('/profil', (req, res) => {
   const access_token = req.cookies.access_token;
 
   const options = {
@@ -116,19 +110,41 @@ app.get('/profile', (req, res) => {
   });
 });
 
-app.get('/tracks', (req, res) => {
+// Send back a playlist from it's id
+app.get('/tracks/:playlistId', (req, res) => {
   const access_token = req.cookies.access_token;
+  const playlist_id = req.params.playlistId;
 
   const options = {
-    url: 'https://api.spotify.com/v1/tracks/4WCgX7CXrUp9VjjVQXkxZR',
+    url: `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
     headers: { Authorization: `Bearer ${access_token}` },
     json: true,
   };
 
-  request.get(options, (error, response, body) => {
-    res.send(body);
+  request.get(options, (error, response, playlistTracks) => {
+    if (error || response.statusCode !== 200) {
+      return res.status(500).send('Internal Server Error: Failed to get playlist tracks');
+    }
+
+    // Select the revelant information
+    var simplifiedTracks = playlistTracks.items.map(function(item) {
+      var track = item.track;
+      return {
+        title: track.name,
+        author: track.artists[0].name,
+        preview_url: track.preview_url
+      };
+    });
+
+    console.log(simplifiedTracks);
+
+    // Sending back the whole data (change it to simplifieldTracks to get the sorted version)
+    res.send(playlistTracks.items);
   });
 });
+
+// URL example:  http://localhost:8888/tracks/{Id}
+
 
 app.get('/top_tracks', (req, res) => {
   const access_token = req.cookies.access_token;
@@ -144,16 +160,41 @@ app.get('/top_tracks', (req, res) => {
   });
 });
 
-app.get('/data', (req, res) => {
-  connection.query('SELECT * FROM thematique', (error, results) => {
-    if (error) {
-      console.error('Erreur lors de la récupération des données depuis la base de données :', error);
-      res.status(500).send('Erreur lors de la récupération des données');
-    } else {
-      res.send(results);
+app.post('/addThematic', async (req, res) => {
+  console.log(req.body);
+  try {
+    const { idThematic, nom, url } = req.body;
+    console.log(req.body)
+    console.log(nom)
+    console.log(url)
+
+    if (!idThematic || !nom || !url) {
+      return res.status(400).json({ message: 'Please provide all required fields.' });
     }
-  });
+
+    const thematic = new thematicModel({
+      idThematic,
+      nom,
+      url
+    });
+
+    const savedThematic = await thematic.save();
+
+    res.status(200).json(savedThematic);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
+
+app.get('/getThematics', async (req, res) => {
+  try {
+      const data = await thematicModel.find();
+      res.json(data)
+  }
+  catch (error) {
+      res.status(500).json({ message: error.message })
+  }
+})
 
 const PORT = 8888;
 app.listen(PORT, () => {
