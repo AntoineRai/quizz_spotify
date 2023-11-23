@@ -191,6 +191,17 @@ app.post('/addThematic', async (req, res) => {
   }
 });
 
+// Get all method for thematics
+app.get('/getThematics', async (req, res) => {
+  try {
+      const data = await thematicModel.find();
+      res.json(data)
+  }
+  catch (error) {
+      res.status(500).json({ message: error.message })
+  }
+})
+
 const PORT = 8888;
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
