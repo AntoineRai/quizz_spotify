@@ -12,7 +12,8 @@ const redirect_uri = process.env.REDIRECT_URI;
 
 const app = express();
 app.use(cookieParser());
-app.use(cors())
+app.use(cors());
+app.use(express.json()); // Add this line to parse JSON bodies
 
 const generateRandomString = (length) => {
   let result = '';
@@ -94,19 +95,41 @@ app.get('/profile', (req, res) => {
   });
 });
 
-app.get('/tracks', (req, res) => {
+// Send back a playlist from it's id
+app.get('/tracks/:playlistId', (req, res) => {
   const access_token = req.cookies.access_token;
+  const playlist_id = req.params.playlistId;
 
   const options = {
-    url: 'https://api.spotify.com/v1/tracks/4WCgX7CXrUp9VjjVQXkxZR',
+    url: `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
     headers: { Authorization: `Bearer ${access_token}` },
     json: true,
   };
 
-  request.get(options, (error, response, body) => {
-    res.send(body);
+  request.get(options, (error, response, playlistTracks) => {
+    if (error || response.statusCode !== 200) {
+      return res.status(500).send('Internal Server Error: Failed to get playlist tracks');
+    }
+
+    // Select the revelant information
+    var simplifiedTracks = playlistTracks.items.map(function(item) {
+      var track = item.track;
+      return {
+        title: track.name,
+        author: track.artists[0].name,
+        preview_url: track.preview_url
+      };
+    });
+
+    console.log(simplifiedTracks);
+
+    // Sending back the whole data (change it to simplifieldTracks to get the sorted version)
+    res.send(playlistTracks.items);
   });
-})
+});
+
+// URL example:  http://localhost:8888/tracks/{Id}
+
 
 app.get('/top_tracks', (req, res) => {
   const access_token = req.cookies.access_token;
