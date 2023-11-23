@@ -1,6 +1,8 @@
 import React from 'react';
 import CardThematic from '../../components/cardThematic';
-
+import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 const themes = [
   'Pop',
   'Rock',
@@ -22,6 +24,14 @@ const ChoiceTheme = () => {
                 <CardThematic key={index} themeName={theme} />
                 ))}
             </div>
+        </div>
+
+        <div className="fixed bottom-0 left-0 m-4">
+            <Link href="/home">
+                <button className="bg-red-500 text-white font-bold py-2 px-4 rounded-full flex items-center">
+                    <FontAwesomeIcon icon={faArrowLeft} className="w-4" />
+                </button>
+            </Link>
         </div>
     </div>
   );
