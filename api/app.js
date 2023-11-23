@@ -5,14 +5,36 @@ const querystring = require('querystring');
 const request = require('request');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const mysql = require('mysql');
 
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI;
+//mise en place des variables d'environnement pour la base de données
+const bdd_host = process.env.BDD_HOST;
+const bdd_user = process.env.BDD_USER;
+const bdd_password = process.env.BDD_PASSWORD;
+const bdd_name = process.env.BDD_NAME;
 
 const app = express();
 app.use(cookieParser());
-app.use(cors())
+app.use(cors());
+
+// Connexion à la base de données MySQL
+const connection = mysql.createConnection({
+  host: bdd_host,
+  user: bdd_user,
+  password: bdd_password,
+  database: bdd_name,
+});
+
+connection.connect((err) => {
+  if (err) {
+    console.error('Erreur de connexion à la base de données :', err);
+  } else {
+    console.log('Connexion à la base de données réussie !');
+  }
+});
 
 const generateRandomString = (length) => {
   let result = '';
@@ -106,7 +128,7 @@ app.get('/tracks', (req, res) => {
   request.get(options, (error, response, body) => {
     res.send(body);
   });
-})
+});
 
 app.get('/top_tracks', (req, res) => {
   const access_token = req.cookies.access_token;
@@ -119,6 +141,17 @@ app.get('/top_tracks', (req, res) => {
 
   request.get(options, (error, response, body) => {
     res.send(body);
+  });
+});
+
+app.get('/data', (req, res) => {
+  connection.query('SELECT * FROM thematique', (error, results) => {
+    if (error) {
+      console.error('Erreur lors de la récupération des données depuis la base de données :', error);
+      res.status(500).send('Erreur lors de la récupération des données');
+    } else {
+      res.send(results);
+    }
   });
 });
 
