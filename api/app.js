@@ -3,12 +3,28 @@ require('dotenv').config();
 const express = require('express');
 const querystring = require('querystring');
 const request = require('request');
+const mongoose = require("mongoose");
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
+const userModel = require('../models/thematicModel');
+const thematicModel = require('../models/thematicModel');
+const mongoString = process.env.DATABASE_URL;
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI;
+
+mongoose.connect(mongoString);
+const database = mongoose.connection
+
+//Connexion à la database
+database.on('error', (error) => {
+  console.log(error)
+})
+
+database.once('connected', () => {
+  console.log('Database Connected');
+})
 
 const app = express();
 app.use(cookieParser());
@@ -143,6 +159,36 @@ app.get('/top_tracks', (req, res) => {
   request.get(options, (error, response, body) => {
     res.send(body);
   });
+});
+
+// Post method to add thematics
+app.post('/addThematic', async (req, res) => {
+  console.log(req.body);
+  try {
+    const { idThematic, nom, url } = req.body;
+    console.log(req.body)
+    console.log(nom)
+    console.log(url)
+
+    // Check if required fields are present in the request body
+    if (!idThematic || !nom || !url) {
+      return res.status(400).json({ message: 'Please provide all required fields.' });
+    }
+
+    // Create a new thematic
+    const thematic = new thematicModel({
+      idThematic,
+      nom,
+      url
+    });
+
+    // Save the post document
+    const savedThematic = await thematic.save();
+
+    res.status(200).json(savedThematic);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 const PORT = 8888;
