@@ -1,97 +1,128 @@
 require('dotenv').config();
 
-var express = require("express");
-var querystring = require("querystring");
-const request = require("request");
+const express = require('express');
+const querystring = require('querystring');
+const request = require('request');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
-var client_id = process.env.CLIENT_ID;
-var client_secret = process.env.CLIENT_SECRET;
-var redirect_uri = process.env.REDIRECT_URI;
+const client_id = process.env.CLIENT_ID;
+const client_secret = process.env.CLIENT_SECRET;
+const redirect_uri = process.env.REDIRECT_URI;
 
-var app = express();
+const app = express();
+app.use(cookieParser());
+app.use(cors())
 
-//Generate a random string containing numbers and letters
 const generateRandomString = (length) => {
-  var result = "";
-  var characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
 };
 
-app.get("/", function (req, res) {
-  res.send({"message":"Welcome to the Spotify API!"});
-}); 
+app.get('/', (req, res) => {
+  res.send({ message: 'Welcome to the Spotify API!' });
+});
 
-//Routes for the login to Spotify
-app.get("/login", function (req, res) {
-  var state = generateRandomString(16);
-  var scope = "user-read-private user-read-email";
+app.get('/login', (req, res) => {
+  const state = generateRandomString(16);
+  const scope = 'user-read-private user-read-email';
 
   res.redirect(
-    "https://accounts.spotify.com/authorize?" +
-      querystring.stringify({
-        response_type: "code",
-        client_id: client_id,
-        scope: scope,
-        redirect_uri: redirect_uri,
-        state: state,
-      })
+    `https://accounts.spotify.com/authorize?${querystring.stringify({
+      response_type: 'code',
+      client_id: client_id,
+      scope: scope,
+      redirect_uri: redirect_uri,
+      state: state,
+    })}`
   );
 });
 
-//Routes for the callback
-app.get("/callback", function (req, res) {
-    var code = req.query.code || null;
-    var state = req.query.state || null;
-  
-    if (state === null) {
-      res.redirect(
-        "/#" +
-          querystring.stringify({
-            error: "state_mismatch",
-          })
-      );
-    } else {
-      var authOptions = {
-        url: "https://accounts.spotify.com/api/token",
-        form: {
-          code: code,
-          redirect_uri: redirect_uri,
-          grant_type: "authorization_code",
-        },
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization:
-            "Basic " +
-            new Buffer.from(client_id + ":" + client_secret).toString("base64"),
-        },
-        json: true,
-      };
-  
-      request.post(authOptions, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-          var access_token = body.access_token;
-          var refresh_token = body.refresh_token;
-  
-          // You can use the access_token and refresh_token here as needed
-          // For example, you can redirect the user to a new page or send a response with the tokens
-          res.send({ access_token: access_token, refresh_token: refresh_token });
-        } else {
-          res.redirect(
-            "/#" +
-              querystring.stringify({
-                error: "invalid_token",
-              })
-          );
-        }
-      });
-    }
-  });
+app.get('/callback', (req, res) => {
+  const code = req.query.code || null;
+  const state = req.query.state || null;
 
-app.listen(8888, function () {
-  console.log("Server listening on http://localhost:8888");
+  if (state === null) {
+    res.redirect(`/#${querystring.stringify({ error: 'state_mismatch' })}`);
+  } else {
+    const authOptions = {
+      url: 'https://accounts.spotify.com/api/token',
+      form: {
+        code: code,
+        redirect_uri: redirect_uri,
+        grant_type: 'authorization_code',
+      },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${Buffer.from(`${client_id}:${client_secret}`).toString('base64')}`,
+      },
+      json: true,
+    };
+
+    request.post(authOptions, (error, response, body) => {
+      if (!error && response.statusCode === 200) {
+        const access_token = body.access_token;
+        const refresh_token = body.refresh_token;
+
+        res.cookie('access_token', access_token, { httpOnly: true });
+        res.cookie('refresh_token', refresh_token, { httpOnly: true });
+
+        res.send({ access_token: access_token, refresh_token: refresh_token });
+      } else {
+        res.redirect(`/#${querystring.stringify({ error: 'invalid_token' })}`);
+      }
+    });
+  }
+});
+
+app.get('/profile', (req, res) => {
+  const access_token = req.cookies.access_token;
+
+  const options = {
+    url: 'https://api.spotify.com/v1/me',
+    headers: { Authorization: `Bearer ${access_token}` },
+    json: true,
+  };
+
+  request.get(options, (error, response, body) => {
+    res.send(body);
+  });
+});
+
+app.get('/tracks', (req, res) => {
+  const access_token = req.cookies.access_token;
+
+  const options = {
+    url: 'https://api.spotify.com/v1/tracks/4WCgX7CXrUp9VjjVQXkxZR',
+    headers: { Authorization: `Bearer ${access_token}` },
+    json: true,
+  };
+
+  request.get(options, (error, response, body) => {
+    res.send(body);
+  });
+})
+
+app.get('/top_tracks', (req, res) => {
+  const access_token = req.cookies.access_token;
+
+  const options = {
+    url: 'https://api.spotify.com/v1/me/top/tracks',
+    headers: { Authorization: `Bearer ${access_token}` },
+    json: true,
+  };
+
+  request.get(options, (error, response, body) => {
+    res.send(body);
+  });
+});
+
+const PORT = 8888;
+app.listen(PORT, () => {
+  console.log(`Server listening on http://localhost:${PORT}`);
 });
