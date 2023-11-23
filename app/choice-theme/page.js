@@ -15,7 +15,7 @@ const themes = [
 const ChoiceTheme = () => {
   return (
     <div>
-        <div className="text-center py-4 bg-blue-500 border-4 border-4 border-white w-96 mx-auto mt-8">
+        <div className="text-center py-4 bg-blue-500 border-4 border-white w-96 mx-auto mt-8">
             <h3 className="text-white text-4xl">Choisissez votre thématique</h3>
         </div>
         <div className="flex justify-center items-center h-80">

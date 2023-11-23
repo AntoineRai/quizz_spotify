@@ -11,7 +11,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="bg-amber-100 flex justify-center items-center bg-[url('/public/MicrosoftTeams-image.png')]">
+      <body className={inter.className}>
         {children}
       </body>
     </html>
