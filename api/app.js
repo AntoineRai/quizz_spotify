@@ -10,6 +10,11 @@ const mysql = require('mysql');
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI;
+//mise en place des variables d'environnement pour la base de données
+const bdd_host = process.env.BDD_HOST;
+const bdd_user = process.env.BDD_USER;
+const bdd_password = process.env.BDD_PASSWORD;
+const bdd_name = process.env.BDD_NAME;
 
 const app = express();
 app.use(cookieParser());
@@ -17,10 +22,10 @@ app.use(cors());
 
 // Connexion à la base de données MySQL
 const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'quizz_spotify',
+  host: bdd_host,
+  user: bdd_user,
+  password: bdd_password,
+  database: bdd_name,
 });
 
 connection.connect((err) => {
