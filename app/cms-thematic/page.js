@@ -1,21 +1,36 @@
-import React from 'react';
+"use client"
+
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-
 const themes = ['Pop', 'Rock', 'Jazz', 'Hip Hop', 'Classique', 'Country'];
 
 const CmsThematic = () => {
+    const [themes, setThemes] = useState([]);
+    useEffect(() => {
+        const fetchThematics = async () => {
+          try {
+            const response = await fetch("http://localhost:8888/getThematics");
+            const data = await response.json();
+            setThemes(data);
+          } catch (error) {
+            console.error("Erreur lors de la récupération des données :", error);
+          }
+        };
+    
+        fetchThematics();
+      }, []);
 
   return (
     <div className="flex justify-center items-center bg-gray-100 h-5/6">
       <div className="flex flex-col items-center mr-8 bg-gray-100 border-gray-900 border-4 h-full">
-        {themes.map((theme, index) => (
+        {themes.map((themes, index) => (
           <div
             key={index}
             className="cursor-pointer p-2 border-gray-500 border-2 w-40 text-center"
             //onClick={() => handleThemeClick(theme)}
           >
-            {theme}
+            {themes}
           </div>
         ))}
       </div>
