@@ -81,7 +81,7 @@ app.get('/callback', (req, res) => {
   }
 });
 
-app.get('/profile', (req, res) => {
+app.get('/profil', (req, res) => {
   const access_token = req.cookies.access_token;
 
   const options = {
