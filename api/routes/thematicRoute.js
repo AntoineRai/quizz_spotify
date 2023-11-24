@@ -13,9 +13,9 @@ router.get('/get_thematic', async (req, res) => {
     }
 });
 
-router.delete('/delete_thematic/:thematicId', async (req, res) => {
+router.delete('/delete_thematic/:idThematic', async (req, res) => {
     try {
-        const thematic = await thematicModel.findByIdAndDelete(req.params.thematicId);
+        const thematic = await thematicModel.findByIdAndDelete(req.params.idThematic);
         if (!thematic) return res.status(404).json({});
         res.status(200).json({});
     } catch (error) {
@@ -49,11 +49,11 @@ router.post('/add_thematic', async (req, res) => {
     }
 });
 
-router.put('/put_thematic/:thematicId', async (req, res) => {
+router.put('/put_thematic/:idThematic', async (req, res) => {
     try {
         const thematic = await thematicModel.findByIdAndUpdate(
-            req.params.thematicId,
-            { name: req.body.name },
+            req.params.idThematic,
+            { idThematic: req.body.idThematic, nom: req.body.nom, url: req.body.url },
             { new: true }
         );
         if (!thematic) return res.status(404).json({});
