@@ -17,6 +17,8 @@ const Page = ({ params }) => {
   const [userGuess, setUserGuess] = useState("");
   const [correctAnswer, setCorrectAnswer] = useState("");
 
+  const srcIFrame = "https://open.spotify.com/embed/playlist/" + playlistId + "?utm_source=generator";
+
   const handleStartButton = () => {
     setCurrentTrackIndex(0);
     setIsPlaying(true);
@@ -154,11 +156,23 @@ const Page = ({ params }) => {
         </div>
       )}
       {isFinish && (
-        <div className="flex flex-col items-center justify-center border-white border-4 font-bold rounded-lg p-4 bg-green-500">
-          <p className="text-white text-xl">Fin de la partie, Bien joué !</p>
-          <p>
-            Score : {score} sur {currentTrackIndex}
-          </p>
+        <div className="flex flex-col w-96 gap-4">
+          <div className="flex flex-col items-center justify-center border-white border-4 font-bold rounded-lg p-4 bg-green-500">
+            <p className="text-white text-xl">Fin de la partie, Bien joué !</p>
+            <p>
+              Score : {score} sur {currentTrackIndex}
+            </p>
+          </div>
+          <h2 className="text-center text-xl font-bold">Ré-écoutez la playlist !</h2>
+          <iframe
+            src={srcIFrame}
+            width="100%"
+            height="152"
+            frameBorder="0"
+            allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+          ></iframe>
         </div>
       )}
       <HomeArrow />

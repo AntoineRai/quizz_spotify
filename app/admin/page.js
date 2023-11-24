@@ -144,7 +144,7 @@ const Thematics = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col mx-4 justify-center h-screen">
       <div className="m-4">
         <h2 className="font-bold text-xl text-center">Page d'administration</h2>
       </div>
@@ -191,16 +191,16 @@ const Thematics = () => {
                     className="m-2 p-2"
                   />
                   <button
-                    className="bg-blue-500 text-white px-2 py-1 m-2 rounded-lg"
+                    className="bg-blue-500 text-white px-2 py-1 m-2 rounded-lg border-white border-4 font-bold w-64"
                     onClick={handleUpdate}
                   >
-                    Mettre à jour
+                    METTRE A JOUR
                   </button>
                   <button
-                    className="bg-gray-500 text-white px-2 py-1 m-2 rounded-lg"
+                    className="bg-gray-500 text-white px-2 py-1 m-2 rounded-lg border-white border-4 font-bold w-64"
                     onClick={handleCancel}
                   >
-                    Annuler
+                    ANNULER
                   </button>
                 </>
               ) : (
@@ -221,16 +221,16 @@ const Thematics = () => {
                   </p>
 
                   <button
-                    className="bg-blue-500 text-white px-2 py-1 m-2 rounded-lg"
+                    className="bg-blue-500 text-white px-2 py-1 m-2 rounded-lg border-white border-4 font-bold w-64"
                     onClick={handleModify}
                   >
-                    Modifier
+                    MODIFIER
                   </button>
                   <button
-                    className="bg-red-500 text-white px-2 py-1 m-2 rounded-lg"
+                    className="bg-red-500 text-white px-2 py-1 m-2 rounded-lg border-white border-4 font-bold w-64"
                     onClick={handleDelete}
                   >
-                    Supprimer
+                    SUPPRIMER
                   </button>
                 </>
               )}
@@ -238,7 +238,7 @@ const Thematics = () => {
           )}
         </div>
         <div className="w-1/4">
-        <h2 className="font-bold text-center">Ajouter un nouveau thème </h2>
+          <h2 className="font-bold text-center">Ajouter un nouveau thème </h2>
           <div className="flex flex-col items-center mt-4">
             <input
               type="text"
@@ -265,15 +265,15 @@ const Thematics = () => {
               className="m-2 p-2"
             />
             <button
-              className="bg-green-500 text-white px-2 py-1 m-2 rounded-lg"
+              className="bg-green-500 text-white px-2 py-1 m-2 rounded-lg border-white border-4 font-bold w-64"
               onClick={handleAdd}
             >
-              Ajouter
+              AJOUTER
             </button>
           </div>
         </div>
       </div>
-      <HomeArrow/>
+      <HomeArrow />
     </div>
   );
 };
