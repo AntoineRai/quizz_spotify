@@ -48,8 +48,6 @@ router.post('/add_thematic', async (req, res) => {
       res.status(400).json({ message: error.message });
     }
 });
-  
-
 
 router.put('/put_thematic/:thematicId', async (req, res) => {
     try {
