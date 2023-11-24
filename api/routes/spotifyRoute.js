@@ -132,8 +132,6 @@ router.get("/tracks/:playlistId", async (req, res) => {
         tracks: simplifiedTracks,
       };
 
-      console.log(responseObj);
-
       // Sending back the modified data
       res.json(responseObj);
     });
