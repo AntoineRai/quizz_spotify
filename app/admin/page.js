@@ -1,190 +1,122 @@
 "use client";
-import React, { useState } from "react";
-import { confirmAlert } from "react-confirm-alert";
-import "react-confirm-alert/src/react-confirm-alert.css";
-import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-const themes = [
-  "Pop",
-  "Rock",
-  "Jazz",
-  "Hip Hop",
-  "Classique",
-  "Country",
-  "Blues",
-  "Rap",
-  "Reggae",
-  "Metal",
-  "Funk",
-];
+import { useState, useEffect } from "react";
+// Import nécessaire pour les styles du formulaire
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
-const CmsThematic = () => {
+const Thematics = () => {
+  const [themes, setThemes] = useState([]);
   const [selectedTheme, setSelectedTheme] = useState(null);
-  const [themeName, setThemeName] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [spotifyId, setSpotifyId] = useState("");
+  const [formData, setFormData] = useState({
+    nom: "",
+    url: "",
+    spotifyID: "",
+  });
+
+  useEffect(() => {
+    const fetchThematics = async () => {
+      try {
+        const response = await fetch("http://localhost:8888/getThematics");
+        const data = await response.json();
+        setThemes(data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données :", error);
+      }
+    };
+
+    fetchThematics();
+  }, []);
 
   const handleThemeClick = (theme) => {
     setSelectedTheme(theme);
   };
 
-  const handleSave = () => {
-    if (!selectedTheme) {
-      alert("Veuillez sélectionner un thème avant de supprimer.");
-      return;
-    }
-    confirmAlert({
-      title: "Confirmation",
-      message: "Êtes-vous sûr de vouloir enregistrer les modifications ?",
-      buttons: [
-        {
-          label: "Oui",
-          onClick: () => {
-            console.log("Save:", selectedTheme);
-          },
-        },
-        {
-          label: "Non",
-          onClick: () => {},
-        },
-      ],
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
     });
+  };
+
+  const handleModify = () => {
+    // Ajoutez ici la logique pour la modification du thème avec formData
+    console.log("Modifier :", formData);
   };
 
   const handleDelete = () => {
-    if (!selectedTheme) {
-      alert("Veuillez sélectionner un thème avant de supprimer.");
-      return;
-    }
-    confirmAlert({
-      title: "Confirmation",
-      message: "Êtes-vous sûr de vouloir supprimer cette thématique ?",
-      buttons: [
-        {
-          label: "Oui",
-          onClick: () => {
-            console.log("Delete:", selectedTheme);
-            setSelectedTheme(null);
-          },
-        },
-        {
-          label: "Non",
-          onClick: () => {},
-        },
-      ],
-    });
+    // Ajoutez ici la logique pour la suppression du thème
+    console.log("Supprimer :", selectedTheme);
   };
 
-  const handleCancel = () => {
-    if (!selectedTheme) {
-      alert("Veuillez sélectionner un thème avant de supprimer.");
-      return;
-    }
-    setSelectedTheme(null);
-  };
-  const handleNewTheme = () => {
-    setThemeName("");
-    setImageUrl("");
-    setSpotifyId("");
+  const handleAdd = () => {
+    // Ajoutez ici la logique pour l'ajout d'un nouveau thème avec formData
+    console.log("Ajouter :", formData);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full m-10">
-      <div className={`flex flex-grow w-full`}>
-        <div
-          className={`flex flex-col items-center w-1/3 p-4 border-gray-900 ${
-            themes.length > 6 ? "overflow-auto" : ""
-          }`}
-        >
-          {themes.map((theme, index) => (
-            <button
-              key={index}
-              className={`p-2 border-gray-500 border-2 w-40 text-center cursor-pointer ${
-                selectedTheme === theme ? "bg-orange-300" : ""
-              }`}
-              onClick={() => handleThemeClick(theme)}
-            >
-              {theme}
-            </button>
+    <div className="flex">
+      <div className="w-1/4">
+        <h2 className="text-center">Les thématiques</h2>
+        <ul>
+          {themes.map((theme) => (
+            <li key={theme._id} onClick={() => handleThemeClick(theme)}>
+              {theme.nom}
+            </li>
           ))}
-        </div>
-
-        <div className="flex flex-col flex-grow p-8 bg-gray-100 border-gray-900 border-4">
-          <div className="flex flex-col h-full">
-            <div className="flex text-left items-center h-1/3">
-              {selectedTheme && (
-                <p className="text-xl">
-                  Nom de la Thématique :{" "}
-                  <input
-                    type="text"
-                    value={selectedTheme}
-                    onChange={(e) => setSelectedTheme(e.target.value)}
-                    className="bg-gray-100 text-xl border-none outline-none"
-                  />
-                </p>
-              )}
-            </div>
-            <div className="flex text-left items-center h-1/3">
-              {selectedTheme && (
-                <p className="text-xl">
-                  Url de l'image :
-                  <input
-                    type="text"
-                    value={selectedTheme}
-                    onChange={(e) => setSelectedTheme(e.target.value)}
-                    className="bg-gray-100 text-xl border-none outline-none"
-                  />{" "}
-                </p>
-              )}
-            </div>
-            <div className="flex text-left items-center h-1/3">
-              {selectedTheme && (
-                <p className="text-xl">
-                  Id Spotify :{" "}
-                  <input
-                    type="text"
-                    value={selectedTheme}
-                    onChange={(e) => setSelectedTheme(e.target.value)}
-                    className="bg-gray-100 text-xl border-none outline-none"
-                  />
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="flex space-x-4 justify-between items-center">
-            <button
-              className="flex-1 bg-green-500 text-white font-bold py-2 px-4 rounded"
-              onClick={handleSave}
-            >
-              Save
-            </button>
-            <button
-              className="flex-1 bg-red-500 text-white font-bold py-2 px-4 rounded"
-              onClick={handleDelete}
-            >
-              Delete
-            </button>
-            <button
-              className="flex-1 bg-gray-400 text-white font-bold py-2 px-4 rounded"
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+        </ul>
       </div>
 
-      <div className="flex flex-col items-center w-1/3 p-4">
-        <button
-          className="bg-blue-200 text-white font-bold py-2 px-4 rounded"
-          onClick={handleNewTheme}
-        >
-          Nouvelle Thématique
-        </button>
+      <div className="w-2/4">
+        {selectedTheme && (
+          <div className="flex flex-col items-center">
+            <h2>{selectedTheme.nom}</h2>
+            <img src={selectedTheme.url} alt={selectedTheme.nom} />
+            <p>ID: {selectedTheme.idThematic}</p>
+
+            <button className="bg-blue-500 text-white px-2 py-1 m-2" onClick={handleModify}>
+              Modifier
+            </button>
+            <button className="bg-red-500 text-white px-2 py-1 m-2" onClick={handleDelete}>
+              Supprimer
+            </button>
+          </div>
+        )}
+        </div>
+        <div className="w-1/4">
+          <div className="flex flex-col items-center mt-4">
+            <h2>Ajouter un nouveau thème</h2>
+            <input
+              type="text"
+              name="nom"
+              placeholder="Nom"
+              value={formData.nom}
+              onChange={handleChange}
+              className="m-2 p-2"
+            />
+            <input
+              type="text"
+              name="url"
+              placeholder="URL de l'image"
+              value={formData.url}
+              onChange={handleChange}
+              className="m-2 p-2"
+            />
+            <input
+              type="text"
+              name="spotifyID"
+              placeholder="ID Spotify"
+              value={formData.spotifyID}
+              onChange={handleChange}
+              className="m-2 p-2"
+            />
+            <button className="bg-green-500 text-white px-2 py-1 m-2" onClick={handleAdd}>
+              Ajouter
+            </button>
+          </div>
+          
       </div>
     </div>
   );
 };
 
-export default CmsThematic;
+export default Thematics;
