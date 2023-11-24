@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Card from "../../../components/CardPlaylist";
+import HomeArrow from "../../../components/HomeArrow";
 
 const Page = ({ params }) => {
   const [songTitle, setSongTitle] = useState("");
@@ -121,6 +122,8 @@ const Page = ({ params }) => {
           )}
         </div>
       )}
+      <HomeArrow />
+
     </div>
   );
 };
