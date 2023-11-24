@@ -1,28 +1,16 @@
 require("dotenv").config();
 
-const express = require("express");
-const querystring = require("querystring");
-const request = require("request");
-const mongoose = require("mongoose");
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
+const express = require('express');
+const querystring = require('querystring');
+const request = require('request');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
-const thematicModel = require("./models/Thematic");
-const mongoString = process.env.DATABASE_URL;
+const thematicModel = require('./models/Thematic');
+const mongoDB = require('./utils/mongoDB');
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI;
-
-mongoose.connect(mongoString);
-const database = mongoose.connection;
-
-database.on("error", (error) => {
-  console.log(error);
-});
-
-database.once("connected", () => {
-  console.log("Database Connected");
-});
 
 const app = express();
 app.use(cookieParser());
