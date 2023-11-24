@@ -1,37 +1,44 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const express = require('express');
-const querystring = require('querystring');
-const request = require('request');
+const express = require("express");
+const querystring = require("querystring");
+const request = require("request");
 const mongoose = require("mongoose");
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
-const thematicModel = require('./models/Thematic');
+const thematicModel = require("./models/Thematic");
 const mongoString = process.env.DATABASE_URL;
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI;
 
 mongoose.connect(mongoString);
-const database = mongoose.connection
+const database = mongoose.connection;
 
-database.on('error', (error) => {
-  console.log(error)
-})
+database.on("error", (error) => {
+  console.log(error);
+});
 
-database.once('connected', () => {
-  console.log('Database Connected');
-})
+database.once("connected", () => {
+  console.log("Database Connected");
+});
 
 const app = express();
 app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send({ message: "Welcome to the Spotify API!" });
+});
+
+//--------------------------------------------------------------------------------------------------------
+
 const generateRandomString = (length) => {
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = "";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const charactersLength = characters.length;
   for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -39,17 +46,13 @@ const generateRandomString = (length) => {
   return result;
 };
 
-app.get('/', (req, res) => {
-  res.send({ message: 'Welcome to the Spotify API!' });
-});
-
-app.get('/login', (req, res) => {
+app.get("/login", (req, res) => {
   const state = generateRandomString(16);
-  const scope = 'user-read-private user-read-email';
+  const scope = "user-read-private user-read-email";
 
   res.redirect(
     `https://accounts.spotify.com/authorize?${querystring.stringify({
-      response_type: 'code',
+      response_type: "code",
       client_id: client_id,
       scope: scope,
       redirect_uri: redirect_uri,
@@ -58,23 +61,25 @@ app.get('/login', (req, res) => {
   );
 });
 
-app.get('/callback', (req, res) => {
+app.get("/callback", (req, res) => {
   const code = req.query.code || null;
   const state = req.query.state || null;
 
   if (state === null) {
-    res.redirect(`/#${querystring.stringify({ error: 'state_mismatch' })}`);
+    res.redirect(`/#${querystring.stringify({ error: "state_mismatch" })}`);
   } else {
     const authOptions = {
-      url: 'https://accounts.spotify.com/api/token',
+      url: "https://accounts.spotify.com/api/token",
       form: {
         code: code,
         redirect_uri: redirect_uri,
-        grant_type: 'authorization_code',
+        grant_type: "authorization_code",
       },
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Basic ${Buffer.from(`${client_id}:${client_secret}`).toString('base64')}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${Buffer.from(
+          `${client_id}:${client_secret}`
+        ).toString("base64")}`,
       },
       json: true,
     };
@@ -84,22 +89,22 @@ app.get('/callback', (req, res) => {
         const access_token = body.access_token;
         const refresh_token = body.refresh_token;
 
-        res.cookie('access_token', access_token, { httpOnly: true });
-        res.cookie('refresh_token', refresh_token, { httpOnly: true });
+        res.cookie("access_token", access_token, { httpOnly: true });
+        res.cookie("refresh_token", refresh_token, { httpOnly: true });
 
         res.send({ access_token: access_token, refresh_token: refresh_token });
       } else {
-        res.redirect(`/#${querystring.stringify({ error: 'invalid_token' })}`);
+        res.redirect(`/#${querystring.stringify({ error: "invalid_token" })}`);
       }
     });
   }
 });
 
-app.get('/profil', (req, res) => {
+app.get("/profil", (req, res) => {
   const access_token = req.cookies.access_token;
 
   const options = {
-    url: 'https://api.spotify.com/v1/me',
+    url: "https://api.spotify.com/v1/me",
     headers: { Authorization: `Bearer ${access_token}` },
     json: true,
   };
@@ -110,7 +115,7 @@ app.get('/profil', (req, res) => {
 });
 
 // Send back a playlist from it's id
-app.get('/tracks/:playlistId', (req, res) => {
+app.get("/tracks/:playlistId", (req, res) => {
   const access_token = req.cookies.access_token;
   const playlist_id = req.params.playlistId;
 
@@ -122,16 +127,18 @@ app.get('/tracks/:playlistId', (req, res) => {
 
   request.get(options, (error, response, playlistTracks) => {
     if (error || response.statusCode !== 200) {
-      return res.status(500).send('Internal Server Error: Failed to get playlist tracks');
+      return res
+        .status(500)
+        .send("Internal Server Error: Failed to get playlist tracks");
     }
 
     // Select the revelant information
-    var simplifiedTracks = playlistTracks.items.map(function(item) {
+    var simplifiedTracks = playlistTracks.items.map(function (item) {
       var track = item.track;
       return {
         title: track.name,
         author: track.artists[0].name,
-        preview_url: track.preview_url
+        preview_url: track.preview_url,
       };
     });
 
@@ -143,13 +150,11 @@ app.get('/tracks/:playlistId', (req, res) => {
 });
 
 // URL example:  http://localhost:8888/tracks/{Id}
-
-
-app.get('/top_tracks', (req, res) => {
+app.get("/top_tracks", (req, res) => {
   const access_token = req.cookies.access_token;
 
   const options = {
-    url: 'https://api.spotify.com/v1/me/top/tracks',
+    url: "https://api.spotify.com/v1/me/top/tracks",
     headers: { Authorization: `Bearer ${access_token}` },
     json: true,
   };
@@ -159,22 +164,26 @@ app.get('/top_tracks', (req, res) => {
   });
 });
 
-app.post('/addThematic', async (req, res) => {
+//--------------------------------------------------------------------------------------------------------
+
+app.post("/addThematic", async (req, res) => {
   console.log(req.body);
   try {
     const { idThematic, nom, url } = req.body;
-    console.log(req.body)
-    console.log(nom)
-    console.log(url)
+    console.log(req.body);
+    console.log(nom);
+    console.log(url);
 
     if (!idThematic || !nom || !url) {
-      return res.status(400).json({ message: 'Please provide all required fields.' });
+      return res
+        .status(400)
+        .json({ message: "Please provide all required fields." });
     }
 
     const thematic = new thematicModel({
       idThematic,
       nom,
-      url
+      url,
     });
 
     const savedThematic = await thematic.save();
@@ -185,15 +194,16 @@ app.post('/addThematic', async (req, res) => {
   }
 });
 
-app.get('/getThematics', async (req, res) => {
+app.get("/getThematics", async (req, res) => {
   try {
-      const data = await thematicModel.find();
-      res.json(data)
+    const data = await thematicModel.find();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-  catch (error) {
-      res.status(500).json({ message: error.message })
-  }
-})
+});
+
+//--------------------------------------------------------------------------------------------------------
 
 const PORT = 8888;
 app.listen(PORT, () => {
