@@ -50,7 +50,7 @@ import HomeArrow from "../../../components/HomeArrow";
     };
 
     const handleFinishButton = () => {
-      setIsPlaying(false);
+      setIsFinish(true);
     };
 
     useEffect(() => {
