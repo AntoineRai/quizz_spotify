@@ -53,8 +53,8 @@ router.put('/put_thematic/:idThematic', async (req, res) => {
     try {
         const thematic = await thematicModel.findByIdAndUpdate(
             req.params.idThematic,
-            { nom: req.body.name },
-            { url: req.body.url }
+            { idThematic: req.body.idThematic, nom: req.body.nom, url: req.body.url },
+            { new: true }
         );
         if (!thematic) return res.status(404).json({});
         res.json(thematic);
