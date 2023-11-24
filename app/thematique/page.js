@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import CardThematic from "../../components/cardThematic";
+import Link from "next/link";
+import CardThematic from "../../components/CardThematic";
 
 const Thematique = () => {
   const [themes, setThemes] = useState([]);
@@ -9,7 +10,9 @@ const Thematique = () => {
   useEffect(() => {
     const fetchThematics = async () => {
       try {
-        const response = await fetch("http://localhost:8888/thematic/get_thematic");
+        const response = await fetch(
+          "http://localhost:8888/thematic/get_thematic"
+        );
         const data = await response.json();
         setThemes(data);
       } catch (error) {
@@ -28,11 +31,13 @@ const Thematique = () => {
       <div className="flex justify-center items-center h-80">
         <div className="grid grid-cols-3 gap-4">
           {themes.map((theme) => (
-            <CardThematic
-              key={theme._id}
-              themeName={theme.nom}
-              url={theme.url}
-            />
+            <Link href="/thematique/[id]" as={`/thematique/${theme.idThematic}`}>
+              <CardThematic
+                key={theme._id}
+                themeName={theme.nom}
+                url={theme.url}
+              />
+            </Link>
           ))}
         </div>
       </div>
