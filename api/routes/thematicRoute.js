@@ -23,6 +23,32 @@ router.delete('/delete_thematic/:thematicId', async (req, res) => {
     }
 });
 
+router.post('/add_thematic', async (req, res) => {
+    console.log(req.body);
+    try {
+      const { idThematic, nom, url } = req.body;
+      console.log(req.body);
+      console.log(nom);
+      console.log(url);
+  
+      if (!idThematic || !nom || !url) {
+        return res.status(400).json({ message: "Please provide all required fields." });
+      }
+  
+      const thematic = new thematicModel({
+        idThematic,
+        nom,
+        url
+      });
+  
+      const savedThematic = await thematic.save();
+      
+      res.status(200).json(savedThematic);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+});
+
 router.put('/put_thematic/:thematicId', async (req, res) => {
     try {
         const thematic = await thematicModel.findByIdAndUpdate(
