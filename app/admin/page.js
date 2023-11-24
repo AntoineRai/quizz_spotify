@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import HomeArrow from "../../components/HomeArrow";
 
 const Thematics = () => {
   const [themes, setThemes] = useState([]);
@@ -273,6 +274,7 @@ const Thematics = () => {
           </div>
         </div>
       </div>
+      <HomeArrow/>
     </div>
   );
 };

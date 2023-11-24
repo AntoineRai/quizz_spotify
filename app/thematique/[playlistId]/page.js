@@ -1,6 +1,7 @@
 "use client";
-  import { useState, useEffect } from "react";
-  import Card from "../../../components/CardPlaylist";
+import { useState, useEffect } from "react";
+import Card from "../../../components/CardPlaylist";
+import HomeArrow from "../../../components/HomeArrow";
 
   const Page = ({ params }) => {
     const [songTitle, setSongTitle] = useState("");
@@ -34,7 +35,6 @@
       }
 
       setSongTitle("");
-
       setShowInfo(true);
       setTimeout(() => {
         setCurrentTrackIndex(currentTrackIndex + 1);
