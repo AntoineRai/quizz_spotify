@@ -9,7 +9,7 @@ const Thematique = () => {
   useEffect(() => {
     const fetchThematics = async () => {
       try {
-        const response = await fetch("http://localhost:8888/getThematics");
+        const response = await fetch("http://localhost:8888/thematic/get_thematic");
         const data = await response.json();
         setThemes(data);
       } catch (error) {

@@ -1,7 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-// Import nécessaire pour les styles du formulaire
-import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const Thematics = () => {
   const [themes, setThemes] = useState([]);
@@ -15,7 +13,9 @@ const Thematics = () => {
   useEffect(() => {
     const fetchThematics = async () => {
       try {
-        const response = await fetch("http://localhost:8888/getThematics");
+        const response = await fetch(
+          "http://localhost:8888/thematic/get_thematic"
+        );
         const data = await response.json();
         setThemes(data);
       } catch (error) {
@@ -54,33 +54,55 @@ const Thematics = () => {
   };
 
   return (
-    <div className="flex mt-8">
-      <div className="w-1/4">
-        <h2 className="text-center font-bold	">Les thématiques</h2>
-        <ul>
-          {themes.map((theme) => (
-            <li key={theme._id} onClick={() => handleThemeClick(theme)}>
-              {theme.nom}
-            </li>
-          ))}
-        </ul>
+    <div>
+      <div className="m-4">
+        <h2 className="font-bold text-xl text-center">Page d'administration</h2>
       </div>
+      <div className="flex mt-8">
+        <div className="w-1/4">
+          <h2 className="text-center font-bold	">Les thématiques</h2>
+          <ul>
+            {themes.map((theme) => (
+              <li key={theme._id} onClick={() => handleThemeClick(theme)}>
+                {theme.nom}
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      <div className="w-2/4">
-        {selectedTheme && (
-          <div className="flex flex-col items-center">
-            <h2>{selectedTheme.nom}</h2>
-            <img src={selectedTheme.url} alt={selectedTheme.nom}className="max-w-400 h-auto" />
-            <p>ID: {selectedTheme.idThematic}</p>
+        <div className="w-2/4">
+          {selectedTheme && (
+            <div className="flex flex-col items-center">
+              <h2 className="text-center font-bold">Votre thème:</h2>
+              <h2>
+                <u>Le nom:</u> {selectedTheme.nom}
+              </h2>
+              <img
+                src={selectedTheme.url}
+                alt={selectedTheme.nom}
+                className="max-w-400 h-auto"
+              />
+              <p>
+                <u>ID Spotify</u> {selectedTheme.idThematic}
+              </p>
+              <p>
+                <u>ID Mongo:</u> {selectedTheme._id}
+              </p>
 
-            <button className="bg-blue-500 text-white px-2 py-1 m-2" onClick={handleModify}>
-              Modifier
-            </button>
-            <button className="bg-red-500 text-white px-2 py-1 m-2" onClick={handleDelete}>
-              Supprimer
-            </button>
-          </div>
-        )}
+              <button
+                className="bg-blue-500 text-white px-2 py-1 m-2 rounded-lg"
+                onClick={handleModify}
+              >
+                Modifier
+              </button>
+              <button
+                className="bg-red-500 text-white px-2 py-1 m-2 rounded-lg"
+                onClick={handleDelete}
+              >
+                Supprimer
+              </button>
+            </div>
+          )}
         </div>
         <div className="w-1/4">
           <div className="flex flex-col items-center mt-4">
@@ -109,11 +131,14 @@ const Thematics = () => {
               onChange={handleChange}
               className="m-2 p-2"
             />
-            <button className="bg-green-500 text-white px-2 py-1 m-2" onClick={handleAdd}>
+            <button
+              className="bg-green-500 text-white px-2 py-1 m-2 rounded-lg"
+              onClick={handleAdd}
+            >
               Ajouter
             </button>
           </div>
-          
+        </div>
       </div>
     </div>
   );
