@@ -24,12 +24,14 @@
     const handleUserResponse = () => {
       const currentTitle = data[currentTrackIndex]?.title;
       
-      if (songTitle === currentTitle) {
+      const formattedSongTitle = songTitle.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      
+      if (formattedSongTitle === currentTitle.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) {
         setScore(score + 1);
         setIsFalse(false);
       } else {
         setIsFalse(true);
-        setUserGuess(songTitle);
+        setUserGuess(formattedSongTitle);
       }
 
       setSongTitle("");
