@@ -48,9 +48,39 @@ const Thematics = () => {
     console.log("Supprimer :", selectedTheme);
   };
 
-  const handleAdd = () => {
-    // Ajoutez ici la logique pour l'ajout d'un nouveau thème avec formData
-    console.log("Ajouter :", formData);
+  const handleAdd = async () => {
+    try {
+      if (!formData.nom || !formData.url || !formData.spotifyID) {
+        alert("Veuillez remplir tous les champs.");
+        return;
+      }
+
+      const response = await fetch("http://localhost:8888/thematic/add_thematic", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nom: formData.nom,
+          url: formData.url,
+          idThematic: formData.spotifyID,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setFormData({
+          nom: "",
+          url: "",
+          spotifyID: "",
+        });
+      } else {
+        const errorData = await response.json();
+        alert(`Erreur : ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de la thématique :", error);
+    }
   };
 
   return (
