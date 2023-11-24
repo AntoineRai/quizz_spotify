@@ -103,20 +103,32 @@ router.get("/tracks/:playlistId", (req, res) => {
         .send("Internal Server Error: Failed to get playlist tracks");
     }
 
+    // Count the number of tracks
+    const trackCount = playlistTracks.items.length;
+
     // Select the relevant information
-    var simplifiedTracks = playlistTracks.items.map(function (item) {
-      var track = item.track;
+    const simplifiedTracks = playlistTracks.items.map(function (item) {
+      const track = item.track;
       return {
         title: track.name,
         author: track.artists[0].name,
         preview_url: track.preview_url,
+        imageUrl: track.album.images && track.album.images.length > 0
+          ? track.album.images[0].url
+          : null,
       };
     });
 
-    console.log(simplifiedTracks);
+    // Modify the response object to include count and tracks with image URLs
+    const responseObj = {
+      trackCount,
+      tracks: simplifiedTracks,
+    };
 
-    // Sending back the whole data (change it to simplifieldTracks to get the sorted version)
-    res.send(playlistTracks.items);
+    console.log(responseObj);
+
+    // Sending back the modified data
+    res.json(responseObj);
   });
 });
 
