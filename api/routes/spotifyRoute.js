@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const querystring = require("querystring");
+const request = require("request");
+const startApp = require('../startApp');
 
 const generateRandomString = (length) => {
   let result = "";
@@ -12,22 +15,22 @@ const generateRandomString = (length) => {
   return result;
 };
 
-app.get("/login", (req, res) => {
+router.get("/login", (req, res) => {
   const state = generateRandomString(16);
   const scope = "user-read-private user-read-email";
 
   res.redirect(
     `https://accounts.spotify.com/authorize?${querystring.stringify({
       response_type: "code",
-      client_id: client_id,
+      client_id: process.env.CLIENT_ID,
       scope: scope,
-      redirect_uri: redirect_uri,
+      redirect_uri: process.env.REDIRECT_URI,
       state: state,
     })}`
   );
 });
 
-app.get("/callback", (req, res) => {
+router.get("/callback", (req, res) => {
   const code = req.query.code || null;
   const state = req.query.state || null;
 
@@ -38,13 +41,13 @@ app.get("/callback", (req, res) => {
       url: "https://accounts.spotify.com/api/token",
       form: {
         code: code,
-        redirect_uri: redirect_uri,
+        redirect_uri: process.env.REDIRECT_URI, // Make sure to replace with your actual redirect URI
         grant_type: "authorization_code",
       },
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         Authorization: `Basic ${Buffer.from(
-          `${client_id}:${client_secret}`
+          `${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`
         ).toString("base64")}`,
       },
       json: true,
@@ -66,7 +69,7 @@ app.get("/callback", (req, res) => {
   }
 });
 
-app.get("/profil", (req, res) => {
+router.get("/profil", (req, res) => {
   const access_token = req.cookies.access_token;
 
   const options = {
@@ -80,7 +83,7 @@ app.get("/profil", (req, res) => {
   });
 });
 
-app.get("/tracks/:playlistId", (req, res) => {
+router.get("/tracks/:playlistId", (req, res) => {
   const access_token = req.cookies.access_token;
   const playlist_id = req.params.playlistId;
 
@@ -97,7 +100,7 @@ app.get("/tracks/:playlistId", (req, res) => {
         .send("Internal Server Error: Failed to get playlist tracks");
     }
 
-    // Select the revelant information
+    // Select the relevant information
     var simplifiedTracks = playlistTracks.items.map(function (item) {
       var track = item.track;
       return {
@@ -114,9 +117,7 @@ app.get("/tracks/:playlistId", (req, res) => {
   });
 });
 
-// URL example:  http://localhost:8888/tracks/{Id}
-
-app.get("/top_tracks", (req, res) => {
+router.get("/top_tracks", (req, res) => {
   const access_token = req.cookies.access_token;
 
   const options = {

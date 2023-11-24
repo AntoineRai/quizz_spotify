@@ -1,8 +1,9 @@
 const express = require("express");
+const thematicModel = require('../models/Thematic');
 const router = express.Router();
-const thematicModel = require('./models/Thematic');
+const startApp = require('../startApp');
 
-app.get('/get_thematic', async (req, res) => {
+router.get('/get_thematic', async (req, res) => {
     try {
         const data = await thematicModel.find();
         res.json(data)
@@ -12,21 +13,28 @@ app.get('/get_thematic', async (req, res) => {
     }
 });
 
-app.delete('/delete_thematic', async (req, res) => {
-    const thematic = getThematic(req.params.thematicId);
-
-    if (!thematic) return res.status(404).json({});
-    const index = thematics.indexOf(thematic);
-    thematics.splice(index, 1);
-    res.status(200).json({});
+router.delete('/delete_thematic/:thematicId', async (req, res) => {
+    try {
+        const thematic = await thematicModel.findByIdAndDelete(req.params.thematicId);
+        if (!thematic) return res.status(404).json({});
+        res.status(200).json({});
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 });
 
-app.put('/put_thematic', async (req, res) => {
-    const thematic = getThematic(req.params.thematicId);
-
-    if (!thematic) return res.status(404).json({});
-    thematic.name = req.body.name;
-    res.json(thematic);
+router.put('/put_thematic/:thematicId', async (req, res) => {
+    try {
+        const thematic = await thematicModel.findByIdAndUpdate(
+            req.params.thematicId,
+            { name: req.body.name },
+            { new: true }
+        );
+        if (!thematic) return res.status(404).json({});
+        res.json(thematic);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 });
 
 module.exports = router;
