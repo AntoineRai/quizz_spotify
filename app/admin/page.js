@@ -1,17 +1,29 @@
-"use client"
-import React, { useState } from 'react';
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
-import Link from 'next/link';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-const themes = ['Pop', 'Rock', 'Jazz', 'Hip Hop', 'Classique', 'Country', 'Blues', 'Rap', 'Reggae', 'Metal', 'Funk'];
+"use client";
+import React, { useState } from "react";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+const themes = [
+  "Pop",
+  "Rock",
+  "Jazz",
+  "Hip Hop",
+  "Classique",
+  "Country",
+  "Blues",
+  "Rap",
+  "Reggae",
+  "Metal",
+  "Funk",
+];
 
 const CmsThematic = () => {
   const [selectedTheme, setSelectedTheme] = useState(null);
-  const [themeName, setThemeName] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [spotifyId, setSpotifyId] = useState('');
+  const [themeName, setThemeName] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [spotifyId, setSpotifyId] = useState("");
 
   const handleThemeClick = (theme) => {
     setSelectedTheme(theme);
@@ -19,21 +31,21 @@ const CmsThematic = () => {
 
   const handleSave = () => {
     if (!selectedTheme) {
-      alert('Veuillez sélectionner un thème avant de supprimer.');
+      alert("Veuillez sélectionner un thème avant de supprimer.");
       return;
     }
     confirmAlert({
-      title: 'Confirmation',
-      message: 'Êtes-vous sûr de vouloir enregistrer les modifications ?',
+      title: "Confirmation",
+      message: "Êtes-vous sûr de vouloir enregistrer les modifications ?",
       buttons: [
         {
-          label: 'Oui',
+          label: "Oui",
           onClick: () => {
-            console.log('Save:', selectedTheme);
+            console.log("Save:", selectedTheme);
           },
         },
         {
-          label: 'Non',
+          label: "Non",
           onClick: () => {},
         },
       ],
@@ -42,22 +54,22 @@ const CmsThematic = () => {
 
   const handleDelete = () => {
     if (!selectedTheme) {
-      alert('Veuillez sélectionner un thème avant de supprimer.');
+      alert("Veuillez sélectionner un thème avant de supprimer.");
       return;
     }
     confirmAlert({
-      title: 'Confirmation',
-      message: 'Êtes-vous sûr de vouloir supprimer cette thématique ?',
+      title: "Confirmation",
+      message: "Êtes-vous sûr de vouloir supprimer cette thématique ?",
       buttons: [
         {
-          label: 'Oui',
+          label: "Oui",
           onClick: () => {
-            console.log('Delete:', selectedTheme);
+            console.log("Delete:", selectedTheme);
             setSelectedTheme(null);
           },
         },
         {
-          label: 'Non',
+          label: "Non",
           onClick: () => {},
         },
       ],
@@ -66,26 +78,30 @@ const CmsThematic = () => {
 
   const handleCancel = () => {
     if (!selectedTheme) {
-      alert('Veuillez sélectionner un thème avant de supprimer.');
+      alert("Veuillez sélectionner un thème avant de supprimer.");
       return;
     }
     setSelectedTheme(null);
   };
   const handleNewTheme = () => {
-    setThemeName(''); 
-    setImageUrl('');
-    setSpotifyId('');
+    setThemeName("");
+    setImageUrl("");
+    setSpotifyId("");
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-4/6 bg-gray-100">
+    <div className="flex flex-col items-center justify-center h-full m-10">
       <div className={`flex flex-grow w-full`}>
-        <div className={`flex flex-col items-center w-1/3 p-4 bg-gray-100 border-gray-900 ${themes.length > 6 ? 'overflow-auto' : ''}`}>
+        <div
+          className={`flex flex-col items-center w-1/3 p-4 border-gray-900 ${
+            themes.length > 6 ? "overflow-auto" : ""
+          }`}
+        >
           {themes.map((theme, index) => (
             <button
               key={index}
               className={`p-2 border-gray-500 border-2 w-40 text-center cursor-pointer ${
-                selectedTheme === theme ? 'bg-orange-300' : ''
+                selectedTheme === theme ? "bg-orange-300" : ""
               }`}
               onClick={() => handleThemeClick(theme)}
             >
@@ -99,7 +115,7 @@ const CmsThematic = () => {
             <div className="flex text-left items-center h-1/3">
               {selectedTheme && (
                 <p className="text-xl">
-                  Nom de la Thématique :{' '}
+                  Nom de la Thématique :{" "}
                   <input
                     type="text"
                     value={selectedTheme}
@@ -118,14 +134,14 @@ const CmsThematic = () => {
                     value={selectedTheme}
                     onChange={(e) => setSelectedTheme(e.target.value)}
                     className="bg-gray-100 text-xl border-none outline-none"
-                  />{' '}
+                  />{" "}
                 </p>
               )}
             </div>
             <div className="flex text-left items-center h-1/3">
               {selectedTheme && (
                 <p className="text-xl">
-                  Id Spotify :{' '}
+                  Id Spotify :{" "}
                   <input
                     type="text"
                     value={selectedTheme}
@@ -160,18 +176,13 @@ const CmsThematic = () => {
       </div>
 
       <div className="flex flex-col items-center w-1/3 p-4">
-        <button className="bg-blue-200 text-white font-bold py-2 px-4 rounded" onClick={handleNewTheme}>
+        <button
+          className="bg-blue-200 text-white font-bold py-2 px-4 rounded"
+          onClick={handleNewTheme}
+        >
           Nouvelle Thématique
         </button>
       </div>
-
-      <div className="fixed bottom-0 left-0 m-4">
-            <Link href="/home">
-                <button className="bg-red-500 text-white font-bold py-2 px-4 rounded-full flex items-center">
-                    <FontAwesomeIcon icon={faArrowLeft} className="w-4" />
-                </button>
-            </Link>
-        </div>
     </div>
   );
 };
