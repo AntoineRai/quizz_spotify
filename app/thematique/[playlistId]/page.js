@@ -1,6 +1,7 @@
 "use client";
-  import { useState, useEffect } from "react";
-  import Card from "../../../components/CardPlaylist";
+import { useState, useEffect } from "react";
+import Card from "../../../components/CardPlaylist";
+import HomeArrow from "../../../components/HomeArrow";
 
   const Page = ({ params }) => {
     const [songTitle, setSongTitle] = useState("");
@@ -12,6 +13,7 @@
     const [isPlaying, setIsPlaying] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
     const [isFalse, setIsFalse] = useState(false);
+    const [isFinish, setIsFinish] = useState(false);
     const [userGuess, setUserGuess] = useState("");
     const [correctAnswer, setCorrectAnswer] = useState("");
 
@@ -35,12 +37,16 @@
       }
 
       setSongTitle("");
-
       setShowInfo(true);
       setTimeout(() => {
         setCurrentTrackIndex(currentTrackIndex + 1);
         setShowInfo(false);
       }, 5000);
+      if (currentTrackIndex+1 === trackCount) {
+        setIsFinish(true);
+      } else {
+        setIsFinish(false);
+      }
     };
 
     const handleFinishButton = () => {
@@ -64,21 +70,20 @@
     }, [playlistId]);
 
     return (
-      <div className="flex flex-col items-center justify-center h-screen gap-4">
-        {!isPlaying && !showInfo && (
+      <div className="flex flex-col items-center justify-center h-screen">
+        {!isPlaying && !showInfo && !isFinish && (
           <div>
-            <Card title="Code de la partie" content={`Code pour l'ID Spotify : ${playlistId}`} />
             <button
               onClick={handleStartButton}
-              className="mt-2 p-2 bg-green-500 text-white rounded"
+              className="p-4 bg-green-500 text-white rounded-lg"
             >
               Commencer le quizz
             </button>
           </div>
         )}
 
-        {isPlaying && !showInfo && (
-          <div>
+        {isPlaying && !showInfo && !isFinish && (
+          <div className="flex flex-col items-center justify-center gap-4">
             <Card title="Score" content={`Score : ${score}`} />
             <p>Musique {currentTrackIndex+1} sur {trackCount}</p>
             <audio
@@ -88,43 +93,51 @@
               onEnded={handleUserResponse}
               onClick={(e) => e.preventDefault()}
               style={{ pointerEvents: "none" }}
+              className="w-64"
             />
             <input
               type="text"
               placeholder="Saisie titre de la chanson ici !"
               value={songTitle}
               onChange={(e) => setSongTitle(e.target.value)}
-              className="mt-4 p-2 border border-gray-300 rounded"
+              className="mt-4 p-2 border border-gray-300 rounded-lg w-64"
             />
             <button
               onClick={handleUserResponse}
-              className="mt-2 p-2 bg-green-500 text-white rounded"
+              className="p-2 bg-green-500 text-white rounded-lg w-56"
             >
               ♬ Continuer ♬
             </button>
 
             <button
               onClick={handleFinishButton}
-              className="mt-2 p-2 bg-red-500 text-white rounded"
+              className="p-2 bg-red-500 text-white rounded-lg w-56"
             >
               Finir la partie
             </button>
           </div>
         )}
 
-        {showInfo && (
-          <div>
-            <img src={data[currentTrackIndex]?.imageUrl} alt="Track Image" />
+        {showInfo && !isFinish && (
+          <div className="flex flex-col items-center justify-center">
+            <img src={data[currentTrackIndex]?.imageUrl} alt="Track Image" className="w-64 h-auto"/>
             <p>{data[currentTrackIndex]?.title} - {data[currentTrackIndex]?.author}</p>
             <p>Score : {score}</p>
             {isFalse && (
-              <p className="text-red-500">Mauvaise réponse! {correctAnswer ? `La réponse correcte était ${correctAnswer}` : ''}</p>
+              <p className="text-red-500 font-bold">Mauvaise réponse! {correctAnswer ? `La réponse correcte était ${correctAnswer}` : ''}</p>
             )}
             {!isFalse && (
-              <p className="text-green-500">Bonne réponse!</p>
+              <p className="text-green-500 font-bold">Bonne réponse!</p>
             )}
           </div>
         )}
+        {isFinish && (
+          <div>
+            <p className="text-green-500">Fin de la partie, Bien joué !</p>
+            <p>Score : {score} sur {trackCount}</p>
+          </div>
+        )}
+        <HomeArrow />
       </div>
     );
   };

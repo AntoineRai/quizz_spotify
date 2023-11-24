@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import HomeArrow from "../../components/HomeArrow";
 
 const Thematics = () => {
   const [themes, setThemes] = useState([]);
@@ -149,7 +150,7 @@ const Thematics = () => {
       </div>
       <div className="flex mt-8">
         <div className="w-1/4">
-          <h2 className="text-center font-bold	">Les thématiques</h2>
+          <h2 className="text-center font-bold">Les thématiques</h2>
           <ul>
             {themes.map((theme) => (
               <li key={theme._id} onClick={() => handleThemeClick(theme)}>
@@ -273,6 +274,7 @@ const Thematics = () => {
           </div>
         </div>
       </div>
+      <HomeArrow/>
     </div>
   );
 };
