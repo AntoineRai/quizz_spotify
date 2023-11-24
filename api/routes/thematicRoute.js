@@ -5,7 +5,13 @@ const Thematic = require('../models/Thematic');
 const app = require('./startApp');
 
 app.get('/get_thematic', async (req, res) => {
-    
+    try {
+        const data = await thematicModel.find();
+        res.json(data)
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message })
+    }
 });
 
 app.delete('/delete_thematic', async (req, res) => {
