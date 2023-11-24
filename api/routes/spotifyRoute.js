@@ -87,6 +87,9 @@ router.get("/tracks/:playlistId", (req, res) => {
   const access_token = req.cookies.access_token;
   const playlist_id = req.params.playlistId;
 
+  console.log(playlist_id)
+  console.log(access_token)
+
   const options = {
     url: `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
     headers: { Authorization: `Bearer ${access_token}` },

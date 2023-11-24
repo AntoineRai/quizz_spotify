@@ -211,10 +211,10 @@ const Thematics = () => {
                   <img
                     src={selectedTheme.url}
                     alt={selectedTheme.nom}
-                    className="max-w-400 h-auto"
+                    className="max-w-xs h-auto"
                   />
                   <p>
-                    <u>ID Spotify</u> {selectedTheme.idThematic}
+                    <u>ID Playlist</u> {selectedTheme.idThematic}
                   </p>
                   <p>
                     <u>ID Mongo:</u> {selectedTheme._id}
@@ -238,8 +238,8 @@ const Thematics = () => {
           )}
         </div>
         <div className="w-1/4">
+        <h2 className="font-bold text-center">Ajouter un nouveau thème </h2>
           <div className="flex flex-col items-center mt-4">
-            <h2 className="font-bold">Ajouter un nouveau thème </h2>
             <input
               type="text"
               name="nom"
