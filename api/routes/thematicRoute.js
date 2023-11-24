@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Thematic = require('../models/Thematic');
 
-const app = require('./startApp');
+const app = require('../startApp');
 
 app.get('/get_thematic', async (req, res) => {
     try {
