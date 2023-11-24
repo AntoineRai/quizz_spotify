@@ -78,7 +78,7 @@
         {isPlaying && !showInfo && (
           <div>
             <Card title="Score" content={`Score : ${score}`} />
-            <p>Musique {currentTrackIndex} sur {trackCount}</p>
+            <p>Musique {currentTrackIndex+1} sur {trackCount}</p>
             <audio
               src={data[currentTrackIndex]?.preview_url}
               controls
