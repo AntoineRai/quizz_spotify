@@ -165,7 +165,6 @@ const Thematics = () => {
             <div className="flex flex-col items-center">
               <h2 className="text-center font-bold">Votre thème:</h2>
               {editing ? (
-                // Si en mode édition, affiche les champs de texte modifiables
                 <>
                   <input
                     type="text"
