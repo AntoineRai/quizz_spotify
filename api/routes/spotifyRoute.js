@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const querystring = require("querystring");
 const request = require("request");
-const startApp = require('../startApp');
+const startApp = require("../startApp");
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 
@@ -110,26 +110,41 @@ router.get("/tracks/:playlistId", async (req, res) => {
       }
 
       // Count the number of tracks
-      const trackCount = playlistTracks.items.length;
 
       // Select the relevant information
-      const simplifiedTracks = playlistTracks.items.map(function (item) {
+      const simplifiedTracks = playlistTracks.items.reduce(function (
+        tracks,
+        item
+      ) {
         const track = item.track;
-        return {
-          title: track.name,
-          author: track.artists[0].name,
-          preview_url: track.preview_url,
-          imageUrl:
-            track.album.images && track.album.images.length > 0
-              ? track.album.images[0].url
-              : null,
-        };
-      });
+        const previewUrl = track.preview_url;
+
+        // Vérifie si previewUrl est défini et non nul
+        if (previewUrl) {
+          tracks.push({
+            title: track.name,
+            author: track.artists[0].name,
+            preview_url: previewUrl,
+            imageUrl:
+              track.album.images && track.album.images.length > 0
+                ? track.album.images[0].url
+                : null,
+          });
+        }
+
+        return tracks;
+      },
+      []);
+
+      const trackCount = simplifiedTracks.length;
 
       // Shuffle the tracks randomly using Fisher-Yates algorithm
       for (let i = trackCount - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [simplifiedTracks[i], simplifiedTracks[j]] = [simplifiedTracks[j], simplifiedTracks[i]];
+        [simplifiedTracks[i], simplifiedTracks[j]] = [
+          simplifiedTracks[j],
+          simplifiedTracks[i],
+        ];
       }
 
       // Modify the response object to include count and tracks with image URLs
@@ -143,7 +158,9 @@ router.get("/tracks/:playlistId", async (req, res) => {
     });
   } catch (error) {
     console.error("Error getting Spotify access token:", error);
-    res.status(500).send("Internal Server Error: Failed to obtain access token");
+    res
+      .status(500)
+      .send("Internal Server Error: Failed to obtain access token");
   }
 });
 

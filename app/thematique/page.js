@@ -25,9 +25,9 @@ const Thematique = () => {
   }, []);
 
   return (
-    <div>
-      <div className="text-center py-4 bg-blue-500 w-96 mx-auto mt-8 rounded-lg">
-        <h3 className="text-white text-4xl">Choisissez votre thématique</h3>
+    <div className="flex flex-col items-center justify-center h-screen gap-4">
+      <div className="text-center p-4 bg-red-500 w-96 border-white border-4 rounded-lg">
+        <h3 className="text-white text-xl font-bold ">CHOISSISSEZ VOTRE THEMATIQUE</h3>
       </div>
       <div className="flex justify-center items-center h-80">
         <div className="grid grid-cols-3 gap-4">
