@@ -1,8 +1,6 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const Thematic = require('../models/Thematic');
-
-const app = require('../startApp');
 
 app.get('/get_thematic', async (req, res) => {
     try {
@@ -30,3 +28,5 @@ app.put('/put_thematic', async (req, res) => {
     thematic.name = req.body.name;
     res.json(thematic);
 });
+
+module.exports = router;

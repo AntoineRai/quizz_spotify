@@ -5,6 +5,7 @@ const querystring = require('querystring');
 const request = require('request');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const app = express();
 
 const thematicModel = require('./models/Thematic');
 const mongoDB = require('./utils/mongoDB');
@@ -13,7 +14,9 @@ const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI;
 
-const app = require('./startApp');
+app.use(cookieParser());
+app.use(cors());
+app.use(express.json());
 
 const generateRandomString = (length) => {
   let result = '';
