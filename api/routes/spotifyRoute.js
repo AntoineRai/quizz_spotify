@@ -3,6 +3,8 @@ const router = express.Router();
 const querystring = require("querystring");
 const request = require("request");
 const startApp = require('../startApp');
+const clientId = process.env.CLIENT_ID;
+const clientSecret = process.env.CLIENT_SECRET;
 
 const generateRandomString = (length) => {
   let result = "";
@@ -83,54 +85,89 @@ router.get("/profil", (req, res) => {
   });
 });
 
-router.get("/tracks/:playlistId", (req, res) => {
-  const access_token = req.cookies.access_token;
-  const playlist_id = req.params.playlistId;
+router.get("/tracks/:playlistId", async (req, res) => {
+  try {
+    // Obtain an access token using the Client Credentials flow
+    const tokenResponse = await getToken();
+    const accessToken = tokenResponse.access_token;
 
-  console.log(playlist_id)
-  console.log(access_token)
+    const playlist_id = req.params.playlistId;
 
-  const options = {
-    url: `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
-    headers: { Authorization: `Bearer ${access_token}` },
+    console.log(playlist_id);
+    console.log(accessToken);
+
+    const options = {
+      url: `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
+      headers: { Authorization: `Bearer ${accessToken}` },
+      json: true,
+    };
+
+    request.get(options, (error, response, playlistTracks) => {
+      if (error || response.statusCode !== 200) {
+        return res
+          .status(500)
+          .send("Internal Server Error: Failed to get playlist tracks");
+      }
+
+      // Count the number of tracks
+      const trackCount = playlistTracks.items.length;
+
+      // Select the relevant information
+      const simplifiedTracks = playlistTracks.items.map(function (item) {
+        const track = item.track;
+        return {
+          title: track.name,
+          author: track.artists[0].name,
+          preview_url: track.preview_url,
+          imageUrl:
+            track.album.images && track.album.images.length > 0
+              ? track.album.images[0].url
+              : null,
+        };
+      });
+
+      // Modify the response object to include count and tracks with image URLs
+      const responseObj = {
+        trackCount,
+        tracks: simplifiedTracks,
+      };
+
+      console.log(responseObj);
+
+      // Sending back the modified data
+      res.json(responseObj);
+    });
+  } catch (error) {
+    console.error("Error getting Spotify access token:", error);
+    res.status(500).send("Internal Server Error: Failed to obtain access token");
+  }
+});
+
+// Function to obtain an access token using the Client Credentials flow
+async function getToken() {
+  const authOptions = {
+    url: "https://accounts.spotify.com/api/token",
+    form: {
+      grant_type: "client_credentials",
+    },
+    headers: {
+      Authorization: `Basic ${Buffer.from(
+        `${clientId}:${clientSecret}`
+      ).toString("base64")}`,
+    },
     json: true,
   };
 
-  request.get(options, (error, response, playlistTracks) => {
-    if (error || response.statusCode !== 200) {
-      return res
-        .status(500)
-        .send("Internal Server Error: Failed to get playlist tracks");
-    }
-
-    // Count the number of tracks
-    const trackCount = playlistTracks.items.length;
-
-    // Select the relevant information
-    const simplifiedTracks = playlistTracks.items.map(function (item) {
-      const track = item.track;
-      return {
-        title: track.name,
-        author: track.artists[0].name,
-        preview_url: track.preview_url,
-        imageUrl: track.album.images && track.album.images.length > 0
-          ? track.album.images[0].url
-          : null,
-      };
+  return new Promise((resolve, reject) => {
+    request.post(authOptions, (error, response, body) => {
+      if (!error && response.statusCode === 200) {
+        resolve(body);
+      } else {
+        reject(error || body);
+      }
     });
-
-    // Modify the response object to include count and tracks with image URLs
-    const responseObj = {
-      trackCount,
-      tracks: simplifiedTracks,
-    };
-
-    console.log(responseObj);
-
-    // Sending back the modified data
-    res.json(responseObj);
   });
-});
+}
 
 router.get("/top_tracks", (req, res) => {
   const access_token = req.cookies.access_token;
