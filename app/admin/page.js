@@ -54,9 +54,9 @@ const Thematics = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex mt-8">
       <div className="w-1/4">
-        <h2 className="text-center">Les thématiques</h2>
+        <h2 className="text-center font-bold	">Les thématiques</h2>
         <ul>
           {themes.map((theme) => (
             <li key={theme._id} onClick={() => handleThemeClick(theme)}>
@@ -70,7 +70,7 @@ const Thematics = () => {
         {selectedTheme && (
           <div className="flex flex-col items-center">
             <h2>{selectedTheme.nom}</h2>
-            <img src={selectedTheme.url} alt={selectedTheme.nom} />
+            <img src={selectedTheme.url} alt={selectedTheme.nom}className="max-w-400 h-auto" />
             <p>ID: {selectedTheme.idThematic}</p>
 
             <button className="bg-blue-500 text-white px-2 py-1 m-2" onClick={handleModify}>
@@ -84,7 +84,7 @@ const Thematics = () => {
         </div>
         <div className="w-1/4">
           <div className="flex flex-col items-center mt-4">
-            <h2>Ajouter un nouveau thème</h2>
+            <h2 className="font-bold">Ajouter un nouveau thème </h2>
             <input
               type="text"
               name="nom"
