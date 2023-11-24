@@ -1,6 +1,7 @@
 "use client";
-  import { useState, useEffect } from "react";
-  import Card from "../../../components/CardPlaylist";
+import { useState, useEffect } from "react";
+import Card from "../../../components/CardPlaylist";
+import HomeArrow from "../../../components/HomeArrow";
 
   const Page = ({ params }) => {
     const [songTitle, setSongTitle] = useState("");
@@ -12,6 +13,7 @@
     const [isPlaying, setIsPlaying] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
     const [isFalse, setIsFalse] = useState(false);
+    const [isFinish, setIsFinish] = useState(false);
     const [userGuess, setUserGuess] = useState("");
     const [correctAnswer, setCorrectAnswer] = useState("");
 
@@ -33,12 +35,16 @@
       }
 
       setSongTitle("");
-
       setShowInfo(true);
       setTimeout(() => {
         setCurrentTrackIndex(currentTrackIndex + 1);
         setShowInfo(false);
       }, 5000);
+      if (currentTrackIndex+1 === trackCount) {
+        setIsFinish(true);
+      } else {
+        setIsFinish(false);
+      }
     };
 
     const handleFinishButton = () => {
@@ -63,7 +69,7 @@
 
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-4">
-        {!isPlaying && !showInfo && (
+        {!isPlaying && !showInfo && !isFinish && (
           <div>
             <Card title="Code de la partie" content={`Code pour l'ID Spotify : ${playlistId}`} />
             <button
@@ -75,10 +81,10 @@
           </div>
         )}
 
-        {isPlaying && !showInfo && (
+        {isPlaying && !showInfo && !isFinish && (
           <div>
             <Card title="Score" content={`Score : ${score}`} />
-            <p>Musique {currentTrackIndex} sur {trackCount}</p>
+            <p>Musique {currentTrackIndex+1} sur {trackCount}</p>
             <audio
               src={data[currentTrackIndex]?.preview_url}
               controls
@@ -110,7 +116,7 @@
           </div>
         )}
 
-        {showInfo && (
+        {showInfo && !isFinish && (
           <div>
             <img src={data[currentTrackIndex]?.imageUrl} alt="Track Image" />
             <p>{data[currentTrackIndex]?.title} - {data[currentTrackIndex]?.author}</p>
@@ -121,6 +127,12 @@
             {!isFalse && (
               <p className="text-green-500">Bonne réponse!</p>
             )}
+          </div>
+        )}
+        {isFinish && (
+          <div>
+            <p className="text-green-500">Fin de la partie, Bien joué !</p>
+            <p>Score : {score} sur {trackCount}</p>
           </div>
         )}
       </div>

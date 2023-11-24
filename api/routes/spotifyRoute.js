@@ -126,6 +126,12 @@ router.get("/tracks/:playlistId", async (req, res) => {
         };
       });
 
+      // Shuffle the tracks randomly using Fisher-Yates algorithm
+      for (let i = trackCount - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [simplifiedTracks[i], simplifiedTracks[j]] = [simplifiedTracks[j], simplifiedTracks[i]];
+      }
+
       // Modify the response object to include count and tracks with image URLs
       const responseObj = {
         trackCount,

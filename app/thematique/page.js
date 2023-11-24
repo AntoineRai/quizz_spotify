@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import CardThematic from "../../components/CardThematic";
+import HomeArrow from "../../components/HomeArrow";
 
 const Thematique = () => {
   const [themes, setThemes] = useState([]);
@@ -41,6 +42,7 @@ const Thematique = () => {
           ))}
         </div>
       </div>
+      <HomeArrow />
     </div>
   );
 };
