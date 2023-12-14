@@ -30,36 +30,40 @@ const Page = ({ params }) => {
   const handleUserResponse = () => {
     const currentTitle = data[currentTrackIndex]?.title; //songTitle
 
-    const usertitle = songTitle //user title is formatted
+    const useranswer = songTitle 
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\s+/g, '');
+      .replace(/\s+/g, ''); //user answer is formatted
 
       const wordsToReplace = listwordban; //words to replace
-      let formatesongtitle = currentTitle; //song title is formatted
+      let formatesongtitle = currentTitle; 
       wordsToReplace.forEach(word => {
-        formatesongtitle = formatesongtitle.replace(word, "");
+        formatesongtitle = formatesongtitle.replace(word, ""); //remove the unwanted words
       });
-      const songtitle = formatesongtitle //song title is formatted and ready for use
+      const songtitle = formatesongtitle 
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\s+/g, '');
+      .replace(/\s+/g, ''); //song title is formatted and ready for use
       
-    console.log("user title :", usertitle);
+    console.log("user title :", useranswer);
     console.log("song title :", songtitle);
+
+    const levenshtein = require('js-levenshtein');
     const titleLength = currentTitle.length;
     const allowedErrors = Math.ceil(titleLength * 0.2);
+    console.log("allowed errors :", allowedErrors); //number of allowed errors (20% of the title length)
 
-    const isCorrect = usertitle === songtitle;
+    const isCorrect = levenshtein(useranswer, songtitle);
+    console.log("isCorrect :", isCorrect); //result of the levenshtein function (number of errors)
 
-    if (isCorrect || usertitle.length >= titleLength - allowedErrors && usertitle.length <= titleLength + allowedErrors) {
+    if (isCorrect <= allowedErrors) {
       setScore(score + 1);
       setIsFalse(false);
     } else {
       setIsFalse(true);
-      setUserGuess(usertitle);
+      setUserGuess(useranswer);
     }
 
     setSongTitle("");
