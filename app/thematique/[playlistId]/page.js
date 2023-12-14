@@ -33,12 +33,12 @@ const Page = ({ params }) => {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
-      const wordsToReplace = listwordban; // Replace with the words you want to remove
+      const wordsToReplace = listwordban; // add or remove in the json the words you want to remove
       let updatedSongTitle = currentTitle;
       wordsToReplace.forEach(word => {
         updatedSongTitle = updatedSongTitle.replace(word, "");
       });
-      console.log("Updated Song Title:", updatedSongTitle);
+      //console.log("Updated Song Title:", updatedSongTitle);
     const titleLength = currentTitle.length;
     const allowedErrors = Math.ceil(titleLength * 0.2);
 
