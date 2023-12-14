@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import Popup from "../components/Popup";
-
+import Header from "../components/header";
 const Home = () => {
   const [buttonPopup, setButtonPopup] = useState(false);
 
@@ -29,6 +29,7 @@ const Home = () => {
           </button>
         </Link>
       </div>
+      <Header></Header>
       <Link href="/admin">
         <button className="bg-red-500 text-white font-bold p-4 rounded-full border-white border-4  flex items-center justify-center absolute top-0 right-0 m-4">
           <FontAwesomeIcon icon={faUser} className="w-4 h-4" />

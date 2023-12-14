@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
 import HomeArrow from "../../components/HomeArrow";
+import Header from "../../components/header";
 
 const Multi = () => {
 
@@ -22,6 +23,7 @@ const Multi = () => {
             </Link>
             </div>
         <HomeArrow />
+        <Header></Header>
     </div>
     
   );

@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import Card from "../../../components/CardPlaylist";
 import HomeArrow from "../../../components/HomeArrow";
 import listwordban from './listwordban.json' assert {type: 'json'};
+import Header from "../../../components/header";
+
 const Page = ({ params }) => {
   const [songTitle, setSongTitle] = useState("");
   const playlistId = params.playlistId;
@@ -181,6 +183,7 @@ const Page = ({ params }) => {
         </div>
       )}
       <HomeArrow />
+      <Header></Header>
     </div>
   );
 };
