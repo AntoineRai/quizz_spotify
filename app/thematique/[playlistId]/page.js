@@ -33,13 +33,12 @@ const Page = ({ params }) => {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
-    if (
-      formattedSongTitle ===
-      currentTitle
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-    ) {
+    const titleLength = currentTitle.length;
+    const allowedErrors = Math.ceil(titleLength * 0.2);
+
+    const isCorrect = formattedSongTitle === currentTitle.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    if (isCorrect || formattedSongTitle.length >= titleLength - allowedErrors && formattedSongTitle.length <= titleLength + allowedErrors) {
       setScore(score + 1);
       setIsFalse(false);
     } else {
