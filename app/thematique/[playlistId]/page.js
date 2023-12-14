@@ -28,29 +28,38 @@ const Page = ({ params }) => {
   };
 
   const handleUserResponse = () => {
-    const currentTitle = data[currentTrackIndex]?.title;
+    const currentTitle = data[currentTrackIndex]?.title; //songTitle
 
-    const formattedSongTitle = songTitle
+    const usertitle = songTitle //user title is formatted
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, '');
 
-      const wordsToReplace = listwordban;
-      let updatedSongTitle = currentTitle;
+      const wordsToReplace = listwordban; //words to replace
+      let formatesongtitle = currentTitle; //song title is formatted
       wordsToReplace.forEach(word => {
-        updatedSongTitle = updatedSongTitle.replace(word, "");
+        formatesongtitle = formatesongtitle.replace(word, "");
       });
+      const songtitle = formatesongtitle //song title is formatted and ready for use
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, '');
+      
+    console.log("user title :", usertitle);
+    console.log("song title :", songtitle);
     const titleLength = currentTitle.length;
     const allowedErrors = Math.ceil(titleLength * 0.2);
 
-    const isCorrect = formattedSongTitle === updatedSongTitle.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const isCorrect = usertitle === songtitle;
 
-    if (isCorrect || formattedSongTitle.length >= titleLength - allowedErrors && formattedSongTitle.length <= titleLength + allowedErrors) {
+    if (isCorrect || usertitle.length >= titleLength - allowedErrors && usertitle.length <= titleLength + allowedErrors) {
       setScore(score + 1);
       setIsFalse(false);
     } else {
       setIsFalse(true);
-      setUserGuess(formattedSongTitle);
+      setUserGuess(usertitle);
     }
 
     setSongTitle("");
