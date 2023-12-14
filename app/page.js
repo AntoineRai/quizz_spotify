@@ -1,9 +1,18 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import Popup from "../components/Popup";
 
 const Home = () => {
+  const [buttonPopup, setButtonPopup] = useState(false);
+
+  useEffect(() => {
+    localStorage.getItem("quizz_name") === null && setButtonPopup(true);
+  }, []);
+
   return (
     <div>
       <div className="flex items-center justify-center h-screen gap-4">
@@ -23,6 +32,9 @@ const Home = () => {
           <FontAwesomeIcon icon={faUser} className="w-4 h-4" />
         </button>
       </Link>
+      <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
+        <p>Rentrez votre nom :</p>
+      </Popup>
     </div>
   );
 };
