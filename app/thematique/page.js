@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import CardThematic from "../../components/CardThematic";
 import HomeArrow from "../../components/HomeArrow";
-import Header from "../../components/header";
+import Header from "../../components/Header";
 
 const Thematique = () => {
   const [themes, setThemes] = useState([]);
@@ -44,7 +44,6 @@ const Thematique = () => {
         </div>
       </div>
       <HomeArrow />
-      <Header></Header>
     </div>
   );
 };

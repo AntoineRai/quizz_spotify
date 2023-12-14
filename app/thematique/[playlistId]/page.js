@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Card from "../../../components/CardPlaylist";
 import HomeArrow from "../../../components/HomeArrow";
 import listwordban from './listwordban.json' assert {type: 'json'};
-import Header from "../../../components/header";
+import Header from "../../../components/Header";
 
 const Page = ({ params }) => {
   const [songTitle, setSongTitle] = useState("");
@@ -35,12 +35,11 @@ const Page = ({ params }) => {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
-      const wordsToReplace = listwordban; // add or remove in the json the words you want to remove
+      const wordsToReplace = listwordban;
       let updatedSongTitle = currentTitle;
       wordsToReplace.forEach(word => {
         updatedSongTitle = updatedSongTitle.replace(word, "");
       });
-      //console.log("Updated Song Title:", updatedSongTitle);
     const titleLength = currentTitle.length;
     const allowedErrors = Math.ceil(titleLength * 0.2);
 
@@ -183,7 +182,6 @@ const Page = ({ params }) => {
         </div>
       )}
       <HomeArrow />
-      <Header></Header>
     </div>
   );
 };
