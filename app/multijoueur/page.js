@@ -11,7 +11,7 @@ const Multi = () => {
   return (
     <div>
         <div className="flex items-center justify-center h-screen gap-4">
-            <Link href="/">
+            <Link href="/socket">
                 <button className="bg-blue-500 text-white font-bold p-4 rounded-lg border-white border-4 w-72">
                     HEBERGER
                 </button>
