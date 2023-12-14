@@ -41,21 +41,21 @@ const Page = ({ params }) => {
       wordsToReplace.forEach(word => {
         formatesongtitle = formatesongtitle.replace(word, ""); //remove the unwanted words
       });
-      const songtitle = formatesongtitle 
+      const appsongtitle = formatesongtitle 
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/\s+/g, ''); //song title is formatted and ready for use
       
     //console.log("user title :", useranswer);
-    //console.log("song title :", songtitle);
+    //console.log("song title :", appsongtitle);
 
     const levenshtein = require('js-levenshtein');
-    const titleLength = songtitle.length;
+    const titleLength = appsongtitle.length;
     const allowedErrors = Math.ceil(titleLength * 0.2);
     //console.log("allowed errors :", allowedErrors); //number of allowed errors (20% of the title length)
 
-    const Incorrectletter = levenshtein(useranswer, songtitle);
+    const Incorrectletter = levenshtein(useranswer, appsongtitle);
     //console.log("Incorrect Letter :", Incorrectletter); //result of the levenshtein function (number of errors)
 
     if (Incorrectletter <= allowedErrors) {
