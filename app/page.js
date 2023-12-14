@@ -10,7 +10,9 @@ const Home = () => {
   const [buttonPopup, setButtonPopup] = useState(false);
 
   useEffect(() => {
-    localStorage.getItem("quizz_name") === null && setButtonPopup(true);
+    if (localStorage.getItem("quizz_name") === null || localStorage.getItem("quizz_name") === ""){
+      setButtonPopup(true)
+    };
   }, []);
 
   return (

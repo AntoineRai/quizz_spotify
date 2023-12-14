@@ -15,7 +15,7 @@ const Multi = () => {
                     HEBERGER
                 </button>
             </Link>
-            <Link href="/">
+            <Link href="/multijoueur/join">
                 <button className="bg-red-500 text-white font-bold p-4 rounded-lg border-white border-4 w-72">
                     REJOINDRE
                 </button>
