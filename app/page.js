@@ -5,14 +5,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import Popup from "../components/Popup";
-import Header from "../components/header";
+import Header from "../components/Header";
 const Home = () => {
   const [buttonPopup, setButtonPopup] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem("quizz_name") === null || localStorage.getItem("quizz_name") === ""){
-      setButtonPopup(true)
-    };
+    let user_data = localStorage.getItem("user_data");
+    if (user_data === null || user_data.name === "") {
+      setButtonPopup(true);
+    }
   }, []);
 
   return (
@@ -29,12 +30,7 @@ const Home = () => {
           </button>
         </Link>
       </div>
-      <Header></Header>
-      <Link href="/admin">
-        <button className="bg-red-500 text-white font-bold p-4 rounded-full border-white border-4  flex items-center justify-center absolute top-0 right-0 m-4">
-          <FontAwesomeIcon icon={faUser} className="w-4 h-4" />
-        </button>
-      </Link>
+
       <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
         <p>Rentrez votre nom :</p>
       </Popup>
