@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import Popup from "../components/Popup";
-import Header from "../components/Header";
+
 const Home = () => {
   const [buttonPopup, setButtonPopup] = useState(false);
 
@@ -30,9 +28,7 @@ const Home = () => {
           </button>
         </Link>
       </div>
-
       <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
-        <p>Rentrez votre nom :</p>
       </Popup>
     </div>
   );

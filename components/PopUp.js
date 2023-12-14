@@ -21,8 +21,9 @@ export default function Popup(props) {
 
     return props.trigger ? (
         <div className='fixed top-0 left-0 w-full h-screen bg-black bg-opacity-50 flex justify-center items-center'>
-            <div className='bg-amber-200 relative p-8 w-80 h-30vh flex flex-col justify-center items-center text-center rounded-lg border-4 border-black shadow-2xl'>
+            <div className='bg-amber-200 relative p-8 w-80 h-30vh flex flex-col justify-center items-center text-center rounded-lg border-4 border-white shadow-2xl'>
                 {props.children}
+                <p>Rentrez votre nom :</p>
                 <input
                     type='text'
                     className='mt-4 p-2 border rounded-md w-full'
