@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Card from "../../../components/CardPlaylist";
 import HomeArrow from "../../../components/HomeArrow";
-
+import listwordban from './listwordban.json' assert {type: 'json'};
 const Page = ({ params }) => {
   const [songTitle, setSongTitle] = useState("");
   const playlistId = params.playlistId;
@@ -33,10 +33,16 @@ const Page = ({ params }) => {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
+      const wordsToReplace = listwordban; // Replace with the words you want to remove
+      let updatedSongTitle = currentTitle;
+      wordsToReplace.forEach(word => {
+        updatedSongTitle = updatedSongTitle.replace(word, "");
+      });
+      console.log("Updated Song Title:", updatedSongTitle);
     const titleLength = currentTitle.length;
     const allowedErrors = Math.ceil(titleLength * 0.2);
 
-    const isCorrect = formattedSongTitle === currentTitle.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const isCorrect = formattedSongTitle === updatedSongTitle.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
     if (isCorrect || formattedSongTitle.length >= titleLength - allowedErrors && formattedSongTitle.length <= titleLength + allowedErrors) {
       setScore(score + 1);
