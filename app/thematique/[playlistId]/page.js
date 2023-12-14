@@ -73,7 +73,11 @@ const Page = ({ params }) => {
       setShowInfo(false);
     }, 5000);
     if (currentTrackIndex + 1 === trackCount) {
-      setIsFinish(true);
+      setShowInfo(true);
+      setTimeout(() => {
+        setIsFinish(true);
+        setShowInfo(false);
+      }, 5000);
     } else {
       setIsFinish(false);
     }
