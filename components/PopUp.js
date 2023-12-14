@@ -18,7 +18,7 @@ export default function Popup(props) {
                     placeholder='Saisissez votre texte ici...'
                     onChange={(e) => setName(e.target.value)}
                 />
-                <button onClick={handleClick} className='mt-4 bg-blue-500 hover:bg-blue-700 text-white border-white border-4 font-bold py-2 px-4 rounded'>Enregistrer</button>
+                <button onClick={handleClick} className='mt-4 bg-blue-500 text-white font-bold p-4 rounded-lg border-white border-4 w-72'>Enregistrer</button>
             </div>
         </div>
     ) : null;
