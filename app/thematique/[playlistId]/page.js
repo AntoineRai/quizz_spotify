@@ -47,18 +47,18 @@ const Page = ({ params }) => {
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/\s+/g, ''); //song title is formatted and ready for use
       
-    console.log("user title :", useranswer);
-    console.log("song title :", songtitle);
+    //console.log("user title :", useranswer);
+    //console.log("song title :", songtitle);
 
     const levenshtein = require('js-levenshtein');
-    const titleLength = currentTitle.length;
+    const titleLength = songtitle.length;
     const allowedErrors = Math.ceil(titleLength * 0.2);
-    console.log("allowed errors :", allowedErrors); //number of allowed errors (20% of the title length)
+    //console.log("allowed errors :", allowedErrors); //number of allowed errors (20% of the title length)
 
-    const isCorrect = levenshtein(useranswer, songtitle);
-    console.log("isCorrect :", isCorrect); //result of the levenshtein function (number of errors)
+    const Incorrectletter = levenshtein(useranswer, songtitle);
+    //console.log("Incorrect Letter :", Incorrectletter); //result of the levenshtein function (number of errors)
 
-    if (isCorrect <= allowedErrors) {
+    if (Incorrectletter <= allowedErrors) {
       setScore(score + 1);
       setIsFalse(false);
     } else {
