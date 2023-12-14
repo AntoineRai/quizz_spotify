@@ -25,12 +25,12 @@ const Thematique = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen gap-4">
-      <div className="text-center p-4 bg-red-500 w-96 border-white border-4 rounded-lg">
+    <div className="flex flex-col items-center justify-center gap-4">
+      <div className="text-center p-4 bg-red-500 w-96 border-white border-4 rounded-lg max-h-full my-10">
         <h3 className="text-white text-xl font-bold ">CHOISSISSEZ VOTRE THEMATIQUE</h3>
       </div>
-      <div className="flex justify-center items-center h-80">
-        <div className="grid grid-cols-3 gap-4">
+      <div className="flex justify-center items-center">
+        <div className="grid grid-cols-4 gap-4">
           {themes.map((theme) => (
             <Link href="/thematique/[id]" as={`/thematique/${theme.idThematic}`}>
               <CardThematic
