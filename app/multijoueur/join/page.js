@@ -6,6 +6,8 @@ import io from "socket.io-client";
 const Join = () => {
   const [gameId, setGameId] = useState("");
   const [game, setGame] = useState(null);
+  const [isJoined, setIsJoined] = useState(false);
+
   let name;
 
   const joinGame = () => {
@@ -17,15 +19,16 @@ const Join = () => {
     const socket = io("http://10.86.12.179:3001");
     socket.emit("joinGame", { name, gameId });
 
-    socket.on("gameJoined", (game) => {
+    socket.on("updateGame", (game) => {
       console.log("Vous avez rejoint la partie:", game);
       setGame(game);
+      setIsJoined(!isJoined);
     });
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">
-      {game ? (
+      {isJoined ? (
         <div className="flex flex-col items-center justify-center">
           <p>Vous avez rejoint la partie {game.id}</p>
           {game.players.map((player, key) => (

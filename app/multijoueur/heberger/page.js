@@ -24,7 +24,7 @@ const Home = () => {
       setGameId(newGame.id);
     });
 
-    socket.on("gameJoined", (game) => {
+    socket.on("updateGame", (game) => {
       console.log("Vous avez rejoint la partie:", game);
       setGame(game);
     });
@@ -34,8 +34,8 @@ const Home = () => {
   const renderPlayersList = () => {
     if (game && game.players && game.players.length > 0) {
       return (
-        <div>
-          <p>Liste des joueurs :</p>
+        <div className="flex flex-col items-center justify-center">
+          <p className="py-4">Liste des joueurs :</p>
           <ul>
             {game.players.map((player, index) => (
               <li key={index}>{player.name}</li>
