@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "dev-server": "nodemon ./api/app.js",
-    "dev-socket": "nodemon ./server/server.js",
-    "dev-socket-p": "nodemon ./server/socket.js",
+    "dev-socket": "nodemon ./server/socket.js",
     "build": "next build",
     "start": "next start -p 3000",
     "lint": "next lint"

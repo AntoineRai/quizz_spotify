@@ -1,10 +1,12 @@
+//Imports
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
-
 const app = express();
 const server = http.createServer(app);
+
+//Création du serveur
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
@@ -12,43 +14,55 @@ const io = new Server(server, {
   },
 });
 
+//Port d'écoute
 const PORT = process.env.PORT || 3001;
 
-app.use(cors({ origin: "http://localhost:3000" }));
-
+//Définition du CORS
 app.options("*", cors());
 
-const games = {};
+//Initialisation des parties
+const games = [];
 
-function generateGameId() {
+//Génération aléatoire de l'ID de la partie
+const generateGameId = () => {
   return Math.random().toString(36).substr(2, 6).toUpperCase();
-}
+};
 
+//Connexion au serveur
 server.listen(PORT, () => {
   console.log(`Serveur en écoute sur le port http://localhost:${PORT}`);
 });
 
+//Gestion des connexions
 io.on("connection", (socket) => {
-  console.log(`Connexion entrante`);
+  //Affichage dans la console
+  console.log("Connexion entrante");
 
   socket.on("createGame", (name) => {
+    //Génération de l'ID de la partie
     const gameId = generateGameId();
     const owner = name;
     const newGame = {
       id: gameId,
       owner: owner,
-      players: [],
+      players: [{ name: name }],
     };
 
-    games[gameId] = newGame;
+    //Ajout de la partie dans la liste des parties
+    games[games.length] = newGame;
 
+    //Envoi de la partie au client
     socket.emit("gameCreated", newGame);
 
+    //Affichage dans la console
     console.log(`Nouveau jeu créé :`, newGame);
   });
 
-  socket.on("joinGame", (id, name) => {
-    const gameToJoin = games[id];
+  socket.on("joinGame", (data) => {
+    let name = data.name;
+    let id = data.gameId;
+
+    const gameToJoin = games.find((game) => game.id === data.gameId);
 
     if (gameToJoin) {
       gameToJoin.players.push({ name: name });
@@ -57,7 +71,7 @@ io.on("connection", (socket) => {
 
       console.log(`Le joueur ${name} a rejoint la partie ${id}`);
     } else {
-      socket.emit("gameNotFound", { message: "Partie non trouvée" });
+      console.log("Partie non trouvée");
     }
   });
 });

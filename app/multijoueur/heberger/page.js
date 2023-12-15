@@ -3,65 +3,34 @@
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
 
-
 const Home = () => {
-  const [gameId, setGameId] = useState("");
-  const [requestedGameId, setRequestedGameId] = useState("");
-  const [name, setName] = useState("");
+  const [gameId, setGameId] = useState(null);
+  let name;
 
-  const handleJoin = () => {
-    socket.emit("joinGame", requestedGameId, name);
-  };
-
-  useEffect(() => {
-    const socket = io("http://localhost:3001");
-
+  const createGame = () => {
     let user_data = localStorage.getItem("user_data");
     if (user_data !== null) {
       user_data = JSON.parse(user_data);
+      name = user_data.name;
     }
+    const socket = io("http://localhost:3001");
+    socket.emit("createGame", name);
 
-    if (user_data.name) {
-      console.log("Les données utilisateur sont valides.");
+    socket.on("gameCreated", (newGame) => {
+      console.log("Nouveau jeu créé:", newGame);
 
-      //TEST DE CREATION DE PARTIE
-      socket.emit("createGame", user_data.name);
-      setName(user_data.name)
-
-      socket.on("gameCreated", (newGame) => {
-        console.log("Nouveau jeu créé:", newGame);
-
-        let gameId = newGame.id;
-        setGameId(gameId);
-
-        //TEST POUR REJOINDRE LA PARTIE
-        socket.emit("joinGame", gameId, user_data.name);
-      });
-    } else {
-      console.error("Les données utilisateur ne sont pas valides.");
-    }
-
-    socket.on("gameJoined", (joinedGame) => {
-      console.log("Vous avez rejoint la partie :", joinedGame);
+      // Stocker l'ID de la partie dans la variable d'état
+      setGameId(newGame.id);
     });
-
-    socket.on("playerJoined", (playerData) => {
-      console.log(`Nouveau joueur rejoint : ${playerData.playerName}`);
-    });
-
-    socket.on("gameNotFound", (error) => {
-      console.error("Erreur :", error.message);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+  };
 
   return (
-    <div>
-      <p>Socket</p>
-      <p>{gameId}</p>
+    <div className="flex flex-col items-center justify-center h-screen gap-4">
+      {!gameId ? (
+        <button className="bg-blue-500 text-white font-bold p-4 rounded-lg border-white border-4 w-72" onClick={createGame}>Créer une partie</button>
+      ) : (
+        <p>Votre ID de Game : {gameId}</p>
+      )}
     </div>
   );
 };
