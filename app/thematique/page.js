@@ -33,7 +33,7 @@ const Thematique = () => {
       <div className="flex justify-center items-center">
         <div className="grid grid-cols-4 gap-4">
           {themes.map((theme) => (
-            <Link href="/thematique/[id]" as={`/thematique/${theme.idThematic}`}>
+            <Link href="/thematique/[id]/solo" as={`/thematique/${theme.idThematic}/solo`}>
               <CardThematic
                 key={theme._id}
                 themeName={theme.nom}

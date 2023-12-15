@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
-import Card from "../../../components/CardPlaylist";
-import HomeArrow from "../../../components/HomeArrow";
-import listwordban from './listwordban.json' assert {type: 'json'};
-import Header from "../../../components/Header";
+import Card from "../../../../components/CardPlaylist";
+import HomeArrow from "../../../../components/HomeArrow";
+import listwordban from '../../listwordban.json' assert {type: 'json'};
+import Header from "../../../../components/Header";
 
 const Page = ({ params }) => {
   const [songTitle, setSongTitle] = useState("");
@@ -47,8 +47,8 @@ const Page = ({ params }) => {
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/\s+/g, ''); //song title is formatted and ready for use
       
-    //console.log("user title :", useranswer);
-    //console.log("song title :", appsongtitle);
+    console.log("user title :", useranswer);
+    console.log("song title :", appsongtitle);
 
     const levenshtein = require('js-levenshtein');
     const titleLength = appsongtitle.length;
@@ -111,7 +111,7 @@ const Page = ({ params }) => {
             onClick={handleStartButton}
             className="p-4 bg-red-500 text-white rounded-lg border-white border-4 font-bold"
           >
-            COMMENCER LE QUIZZ !
+            COMMENCER LE QUIZZ ! en multi
           </button>
         </div>
       )}
