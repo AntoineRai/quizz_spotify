@@ -1,4 +1,5 @@
 import React from "react";
+import HomeArrow from "../../../components/HomeArrow";
 
 const Join = () => {
   return (
@@ -10,6 +11,7 @@ const Join = () => {
           REJOINDRE
         </button>
       </div>
+      <HomeArrow />
     </div>
   );
 };
