@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import io from "socket.io-client";
 import Link from "next/link";
 import CardThematic from "../../../components/CardThematic";
+import {CopyToClipboard} from "react-copy-to-clipboard/src";
 
 const Home = () => {
   const [gameId, setGameId] = useState(null);
@@ -94,11 +95,13 @@ const Home = () => {
       )}
 
       {chosenTheme && gameId && (
-        <div className="flex flex-col items-center justify-center">
-          <p>Votre ID de Game : {gameId}</p>
-          <p>Votre thème est le suivant : {chosenTheme}</p>
-          {renderPlayersList()}
-        </div>
+          <div>
+            <span className="mr-3">Votre ID de Game : {gameId}</span>
+            <CopyToClipboard text={gameId}>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded">Copy</button>
+            </CopyToClipboard>
+            {renderPlayersList()}
+          </div>
       )}
     </div>
   );
