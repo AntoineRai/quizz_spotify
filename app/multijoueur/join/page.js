@@ -28,7 +28,6 @@ const Join = () => {
       {game ? (
         <div className="flex flex-col items-center justify-center">
           <p>Vous avez rejoint la partie {game.id}</p>
-          <p>Vous êtes le joueur {game.players.length}</p>
           {game.players.map((player, key) => (
             <p key={key}>{player.name}</p>
           ))}

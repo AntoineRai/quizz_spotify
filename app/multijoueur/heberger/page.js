@@ -23,15 +23,12 @@ const Home = () => {
       setGame(newGame);
       setGameId(newGame.id);
     });
-  };
 
-  useEffect(() => {
-    const socket = io("http://10.86.12.179:3001");
     socket.on("gameJoined", (game) => {
       console.log("Vous avez rejoint la partie:", game);
       setGame(game);
     });
-  }), [];
+  };
 
   // Affiche la liste des joueurs dans la partie
   const renderPlayersList = () => {
