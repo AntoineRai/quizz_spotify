@@ -5,6 +5,7 @@ import io from "socket.io-client";
 
 const Home = () => {
   const [gameId, setGameId] = useState(null);
+  const [game, setGame] = useState(null);
   let name;
 
   const createGame = () => {
@@ -13,15 +14,40 @@ const Home = () => {
       user_data = JSON.parse(user_data);
       name = user_data.name;
     }
-    const socket = io("http://10.86.15.117:3001");
+    const socket = io("http://10.86.12.179:3001");
     socket.emit("createGame", name);
 
     socket.on("gameCreated", (newGame) => {
       console.log("Nouveau jeu créé:", newGame);
 
-      // Stocker l'ID de la partie dans la variable d'état
+      setGame(newGame);
       setGameId(newGame.id);
     });
+  };
+
+  useEffect(() => {
+    const socket = io("http://10.86.12.179:3001");
+    socket.on("gameJoined", (game) => {
+      console.log("Vous avez rejoint la partie:", game);
+      setGame(game);
+    });
+  }), [];
+
+  // Affiche la liste des joueurs dans la partie
+  const renderPlayersList = () => {
+    if (game && game.players && game.players.length > 0) {
+      return (
+        <div>
+          <p>Liste des joueurs :</p>
+          <ul>
+            {game.players.map((player, index) => (
+              <li key={index}>{player.name}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -34,7 +60,10 @@ const Home = () => {
           Créer une partie
         </button>
       ) : (
-        <p>Votre ID de Game : {gameId}</p>
+        <div>
+          <p>Votre ID de Game : {gameId}</p>
+          {renderPlayersList()}
+        </div>
       )}
     </div>
   );

@@ -29,17 +29,18 @@ const generateGameId = () => {
 };
 
 //Connexion au serveur
-server.listen(PORT, '10.86.15.117', () => {
-  console.log(`Serveur en écoute sur le port http://10.86.15.117:${PORT}`);
+server.listen(PORT,'10.86.12.179', () => {
+  console.log(`Serveur en écoute sur le port http://10.86.12.179:${PORT}`);
 });
 
-//Gestion des connexions
+// Gestion des connexions
 io.on("connection", (socket) => {
-  //Affichage dans la console
+  // Affichage dans la console
   console.log("Connexion entrante");
 
+  // Création d'une partie
   socket.on("createGame", (name) => {
-    //Génération de l'ID de la partie
+    // Génération de l'ID de la partie
     const gameId = generateGameId();
     const owner = name;
     const newGame = {
@@ -48,29 +49,45 @@ io.on("connection", (socket) => {
       players: [{ name: name }],
     };
 
-    //Ajout de la partie dans la liste des parties
-    games[games.length] = newGame;
+    // Ajout de la partie dans la liste des parties
+    games.push(newGame);
 
-    //Envoi de la partie au client
+    // Envoi de la partie au client
     socket.emit("gameCreated", newGame);
 
-    //Affichage dans la console
+    // Rejoindre la room de la partie
+    socket.join(gameId);
+
+    // Affichage dans la console
     console.log(`Nouveau jeu créé :`, newGame);
   });
 
+  // Rejoindre une partie
   socket.on("joinGame", (data) => {
     let name = data.name;
     let id = data.gameId;
 
+    // Recherche de la partie
     const gameToJoin = games.find((game) => game.id === data.gameId);
 
+    // Si la partie est trouvée
     if (gameToJoin) {
+      // Ajout du joueur dans la partie
       gameToJoin.players.push({ name: name });
 
+      // Rejoindre la room de la partie
+      socket.join(id);
+
+      // Envoi de la partie aux autres joueurs
+      io.to(id).emit("gameJoined", gameToJoin);
+
+      // Envoi de la partie au client
       socket.emit("gameJoined", gameToJoin);
 
+      // Affichage dans la console
       console.log(`Le joueur ${name} a rejoint la partie ${id}`);
     } else {
+      // Affichage dans la console
       console.log("Partie non trouvée");
     }
   });
