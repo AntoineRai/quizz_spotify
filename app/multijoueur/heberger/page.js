@@ -2,11 +2,35 @@
 
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
+import Link from "next/link";
+import CardThematic from "../../../components/CardThematic";
 
 const Home = () => {
   const [gameId, setGameId] = useState(null);
   const [game, setGame] = useState(null);
+  const [themes, setThemes] = useState([]);
+  const [chosenTheme, setChosenTheme] = useState(null);
   let name;
+
+  const handleClickThematic = (e) => {
+    setChosenTheme(e.target.textContent);
+  };
+
+  useEffect(() => {
+    const fetchThematics = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8888/thematic/get_thematic"
+        );
+        const data = await response.json();
+        setThemes(data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données :", error);
+      }
+    };
+
+    fetchThematics();
+  }, []);
 
   const createGame = () => {
     let user_data = localStorage.getItem("user_data");
@@ -49,14 +73,26 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">
-      {!gameId ? (
+      {!chosenTheme && (
+        <div className="grid grid-cols-4 gap-4">
+          {themes.map((theme) => (
+            <div key={theme._id} onClick={handleClickThematic}>
+              <CardThematic themeName={theme.nom} url={theme.url} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {chosenTheme && !gameId && (
         <button
           className="bg-blue-500 text-white font-bold p-4 rounded-lg border-white border-4 w-72"
           onClick={createGame}
         >
           Créer une partie
         </button>
-      ) : (
+      )}
+
+      {chosenTheme && gameId && (
         <div>
           <p>Votre ID de Game : {gameId}</p>
           {renderPlayersList()}
