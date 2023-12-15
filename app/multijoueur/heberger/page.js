@@ -27,7 +27,12 @@ const Home = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">
       {!gameId ? (
-        <button className="bg-blue-500 text-white font-bold p-4 rounded-lg border-white border-4 w-72" onClick={createGame}>Créer une partie</button>
+        <button
+          className="bg-blue-500 text-white font-bold p-4 rounded-lg border-white border-4 w-72"
+          onClick={createGame}
+        >
+          Créer une partie
+        </button>
       ) : (
         <p>Votre ID de Game : {gameId}</p>
       )}
