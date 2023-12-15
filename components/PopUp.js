@@ -17,6 +17,7 @@ export default function Popup(props) {
         const userDataString = JSON.stringify(userData);
 
         localStorage.setItem('user_data', userDataString);
+
     };
 
     return props.trigger ? (
