@@ -36,7 +36,7 @@ server.listen(PORT,'10.86.12.179', () => {
 // Gestion des connexions
 io.on("connection", (socket) => {
   // Affichage dans la console
-  console.log("Connexion entrante");
+  console.log("Connexion entrante: " + socket);
 
   // Création d'une partie
   socket.on("createGame", (name) => {
@@ -79,10 +79,10 @@ io.on("connection", (socket) => {
       socket.join(id);
 
       // Envoi de la partie aux autres joueurs
-      io.to(id).emit("gameJoined", gameToJoin);
+      io.to(id).emit("updateGame", gameToJoin);
 
       // Envoi de la partie au client
-      socket.emit("gameJoined", gameToJoin);
+      socket.emit("updateGame", gameToJoin);
 
       // Affichage dans la console
       console.log(`Le joueur ${name} a rejoint la partie ${id}`);

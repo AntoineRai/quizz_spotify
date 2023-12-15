@@ -2,11 +2,39 @@
 
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
+import Link from "next/link";
+import CardThematic from "../../../components/CardThematic";
+import { CopyToClipboard } from "react-copy-to-clipboard/src";
 
 const Home = () => {
   const [gameId, setGameId] = useState(null);
   const [game, setGame] = useState(null);
+  const [themes, setThemes] = useState([]);
+  const [chosenTheme, setChosenTheme] = useState(null);
   let name;
+
+  const handleClick = (e) => {
+    const chosenTheme = themes.find(
+      (theme) => theme.nom === e.target.textContent
+    );
+    setChosenTheme(chosenTheme);
+  };
+
+  useEffect(() => {
+    const fetchThematics = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8888/thematic/get_thematic"
+        );
+        const data = await response.json();
+        setThemes(data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données :", error);
+      }
+    };
+
+    fetchThematics();
+  }, []);
 
   const createGame = () => {
     let user_data = localStorage.getItem("user_data");
@@ -24,18 +52,17 @@ const Home = () => {
       setGameId(newGame.id);
     });
 
-    socket.on("gameJoined", (game) => {
+    socket.on("updateGame", (game) => {
       console.log("Vous avez rejoint la partie:", game);
       setGame(game);
     });
   };
 
-  // Affiche la liste des joueurs dans la partie
   const renderPlayersList = () => {
     if (game && game.players && game.players.length > 0) {
       return (
-        <div>
-          <p>Liste des joueurs :</p>
+        <div className="flex flex-col items-center justify-center">
+          <p className="py-4">Liste des joueurs :</p>
           <ul>
             {game.players.map((player, index) => (
               <li key={index}>{player.name}</li>
@@ -49,16 +76,44 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">
-      {!gameId ? (
+      {!chosenTheme && (
+        <div className="grid grid-cols-4 gap-4">
+          {themes.map((theme) => (
+            <div key={theme._id} onClick={handleClick}>
+              <CardThematic themeName={theme.nom} url={theme.url} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {chosenTheme && !gameId && (
         <button
           className="bg-blue-500 text-white font-bold p-4 rounded-lg border-white border-4 w-72"
           onClick={createGame}
         >
           Créer une partie
         </button>
-      ) : (
+      )}
+
+      {chosenTheme && gameId && (
         <div>
-          <p>Votre ID de Game : {gameId}</p>
+          <span className="mr-3">Votre ID de Game : {gameId}</span>
+          <div className="flex flex-col gap-4">
+            <CopyToClipboard text={gameId}>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded">
+                Copy
+              </button>
+            </CopyToClipboard>
+            <p>Votre thème est : {chosenTheme.nom}</p>
+            <Link
+              href="/thematique/[id]/multi"
+              as={`/thematique/${chosenTheme.idThematic}/multi`}
+            >
+              <button className="p-4 bg-red-500 text-white rounded-lg border-white border-4 font-bold">
+                Lancer la partie
+              </button>
+            </Link>
+          </div>
           {renderPlayersList()}
         </div>
       )}
