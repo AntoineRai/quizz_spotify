@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import io from "socket.io-client";
 import Link from "next/link";
 import CardThematic from "../../../components/CardThematic";
-import {CopyToClipboard} from "react-copy-to-clipboard/src";
+import { CopyToClipboard } from "react-copy-to-clipboard/src";
 
 const Home = () => {
   const [gameId, setGameId] = useState(null);
@@ -13,9 +13,11 @@ const Home = () => {
   const [chosenTheme, setChosenTheme] = useState(null);
   let name;
 
-  const handleClickThematic = (e) => {
-    setChosenTheme(e.target.textContent);
-    console.log(e.target.textContent)
+  const handleClick = (e) => {
+    const chosenTheme = themes.find(
+      (theme) => theme.nom === e.target.textContent
+    );
+    setChosenTheme(chosenTheme);
   };
 
   useEffect(() => {
@@ -56,7 +58,6 @@ const Home = () => {
     });
   };
 
-  // Affiche la liste des joueurs dans la partie
   const renderPlayersList = () => {
     if (game && game.players && game.players.length > 0) {
       return (
@@ -78,7 +79,7 @@ const Home = () => {
       {!chosenTheme && (
         <div className="grid grid-cols-4 gap-4">
           {themes.map((theme) => (
-            <div key={theme._id} onClick={handleClickThematic}>
+            <div key={theme._id} onClick={handleClick}>
               <CardThematic themeName={theme.nom} url={theme.url} />
             </div>
           ))}
@@ -95,13 +96,26 @@ const Home = () => {
       )}
 
       {chosenTheme && gameId && (
-          <div>
-            <span className="mr-3">Votre ID de Game : {gameId}</span>
+        <div>
+          <span className="mr-3">Votre ID de Game : {gameId}</span>
+          <div className="flex flex-col gap-4">
             <CopyToClipboard text={gameId}>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded">Copy</button>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded">
+                Copy
+              </button>
             </CopyToClipboard>
-            {renderPlayersList()}
+            <p>Votre thème est : {chosenTheme.nom}</p>
+            <Link
+              href="/thematique/[id]/multi"
+              as={`/thematique/${chosenTheme.idThematic}/multi`}
+            >
+              <button className="p-4 bg-red-500 text-white rounded-lg border-white border-4 font-bold">
+                Lancer la partie
+              </button>
+            </Link>
           </div>
+          {renderPlayersList()}
+        </div>
       )}
     </div>
   );
