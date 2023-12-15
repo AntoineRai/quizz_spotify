@@ -29,8 +29,8 @@ const generateGameId = () => {
 };
 
 //Connexion au serveur
-server.listen(PORT, () => {
-  console.log(`Serveur en écoute sur le port http://localhost:${PORT}`);
+server.listen(PORT, '10.86.15.117', () => {
+  console.log(`Serveur en écoute sur le port http://10.86.15.117:${PORT}`);
 });
 
 //Gestion des connexions
