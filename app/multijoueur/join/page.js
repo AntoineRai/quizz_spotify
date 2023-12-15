@@ -37,7 +37,6 @@ const Join = () => {
           REJOINDRE
         </button>
       </div>
-      <HomeArrow />
     </div>
   );
 };
