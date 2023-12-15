@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
-import Card from "../../../components/CardPlaylist";
-import HomeArrow from "../../../components/HomeArrow";
-import listwordban from './listwordban.json' assert {type: 'json'};
-import Header from "../../../components/Header";
+import Card from "../../../../components/CardPlaylist";
+import HomeArrow from "../../../../components/HomeArrow";
+import listwordban from '../../listwordban.json' assert {type: 'json'};
+import Header from "../../../../components/Header";
 
 const Page = ({ params }) => {
   const [songTitle, setSongTitle] = useState("");
@@ -28,29 +28,42 @@ const Page = ({ params }) => {
   };
 
   const handleUserResponse = () => {
-    const currentTitle = data[currentTrackIndex]?.title;
+    const currentTitle = data[currentTrackIndex]?.title; //songTitle
 
-    const formattedSongTitle = songTitle
+    const useranswer = songTitle 
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, ''); //user answer is formatted
 
-      const wordsToReplace = listwordban;
-      let updatedSongTitle = currentTitle;
+      const wordsToReplace = listwordban; //words to replace
+      let formatesongtitle = currentTitle; 
       wordsToReplace.forEach(word => {
-        updatedSongTitle = updatedSongTitle.replace(word, "");
+        formatesongtitle = formatesongtitle.replace(word, ""); //remove the unwanted words
       });
-    const titleLength = currentTitle.length;
+      const appsongtitle = formatesongtitle 
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, ''); //song title is formatted and ready for use
+      
+    console.log("user title :", useranswer);
+    console.log("song title :", appsongtitle);
+
+    const levenshtein = require('js-levenshtein');
+    const titleLength = appsongtitle.length;
     const allowedErrors = Math.ceil(titleLength * 0.2);
+    //console.log("allowed errors :", allowedErrors); //number of allowed errors (20% of the title length)
 
-    const isCorrect = formattedSongTitle === updatedSongTitle.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const Incorrectletter = levenshtein(useranswer, appsongtitle);
+    //console.log("Incorrect Letter :", Incorrectletter); //result of the levenshtein function (number of errors)
 
-    if (isCorrect || formattedSongTitle.length >= titleLength - allowedErrors && formattedSongTitle.length <= titleLength + allowedErrors) {
+    if (Incorrectletter <= allowedErrors) {
       setScore(score + 1);
       setIsFalse(false);
     } else {
       setIsFalse(true);
-      setUserGuess(formattedSongTitle);
+      setUserGuess(useranswer);
     }
 
     setSongTitle("");
@@ -60,7 +73,11 @@ const Page = ({ params }) => {
       setShowInfo(false);
     }, 5000);
     if (currentTrackIndex + 1 === trackCount) {
-      setIsFinish(true);
+      setShowInfo(true);
+      setTimeout(() => {
+        setIsFinish(true);
+        setShowInfo(false);
+      }, 5000);
     } else {
       setIsFinish(false);
     }
@@ -94,7 +111,7 @@ const Page = ({ params }) => {
             onClick={handleStartButton}
             className="p-4 bg-red-500 text-white rounded-lg border-white border-4 font-bold"
           >
-            COMMENCER LE QUIZZ !
+            COMMENCER LE QUIZZ ! en multi
           </button>
         </div>
       )}
