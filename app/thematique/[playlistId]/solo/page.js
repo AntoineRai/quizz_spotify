@@ -37,7 +37,8 @@ const Page = ({ params }) => {
       .replace(/\s+/g, ''); //user answer is formatted
 
       const wordsToReplace = listwordban; //words to replace
-      let formatesongtitle = currentTitle; 
+      const currentTitle1 = currentTitle.split(" - ")[0];
+      let formatesongtitle = currentTitle1; 
       wordsToReplace.forEach(word => {
         formatesongtitle = formatesongtitle.replace(word, ""); //remove the unwanted words
       });
