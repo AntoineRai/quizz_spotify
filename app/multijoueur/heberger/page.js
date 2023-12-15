@@ -14,6 +14,7 @@ const Home = () => {
 
   const handleClickThematic = (e) => {
     setChosenTheme(e.target.textContent);
+    console.log(e.target.textContent)
   };
 
   useEffect(() => {
@@ -93,8 +94,9 @@ const Home = () => {
       )}
 
       {chosenTheme && gameId && (
-        <div>
+        <div className="flex flex-col items-center justify-center">
           <p>Votre ID de Game : {gameId}</p>
+          <p>Votre thème est le suivant : {chosenTheme}</p>
           {renderPlayersList()}
         </div>
       )}
