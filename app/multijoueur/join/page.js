@@ -13,7 +13,7 @@ const Join = () => {
       user_data = JSON.parse(user_data);
       name = user_data.name;
     }
-    const socket = io("http://localhost:3001");
+    const socket = io("http://10.86.15.117:3001");
     socket.emit("joinGame", { name, gameId });
 
     socket.on("gameJoined", (game) => {
