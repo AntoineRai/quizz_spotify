@@ -36,8 +36,12 @@ const Page = ({ params }) => {
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/\s+/g, ''); //user answer is formatted
 
-      const wordsToReplace = listwordban; //words to replace
-      let formatesongtitle = currentTitle; 
+      const currentTitle2 = currentTitle 
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, ''); //song title is formatted and ready for word deletion
+      let formatesongtitle = currentTitle2; 
       wordsToReplace.forEach(word => {
         formatesongtitle = formatesongtitle.replace(word, ""); //remove the unwanted words
       });
