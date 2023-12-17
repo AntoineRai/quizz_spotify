@@ -29,8 +29,8 @@ const generateGameId = () => {
 };
 
 //Connexion au serveur
-server.listen(PORT,'10.86.12.179', () => {
-  console.log(`Serveur en écoute sur le port http://10.86.12.179:${PORT}`);
+server.listen(PORT,'192.168.0.25', () => {
+  console.log(`Serveur en écoute sur le port http://192.168.0.25:${PORT}`);
 });
 
 // Gestion des connexions
@@ -39,14 +39,18 @@ io.on("connection", (socket) => {
   console.log("Connexion entrante: " + socket);
 
   // Création d'une partie
-  socket.on("createGame", (name) => {
+  socket.on("createGame", (data) => {
     // Génération de l'ID de la partie
     const gameId = generateGameId();
-    const owner = name;
+    console.log(data)
+    const owner = data.name;
     const newGame = {
       id: gameId,
       owner: owner,
-      players: [{ name: name }],
+      players: [],
+      nomTheme: data.chosenTheme.nom,
+      idTheme: data.chosenTheme.idThematic,
+      isGameStarted: false,
     };
 
     // Ajout de la partie dans la liste des parties
@@ -64,8 +68,10 @@ io.on("connection", (socket) => {
 
   // Rejoindre une partie
   socket.on("joinGame", (data) => {
+    console.log(data)
     let name = data.name;
     let id = data.gameId;
+    console.log(games)
 
     // Recherche de la partie
     const gameToJoin = games.find((game) => game.id === data.gameId);
@@ -73,7 +79,7 @@ io.on("connection", (socket) => {
     // Si la partie est trouvée
     if (gameToJoin) {
       // Ajout du joueur dans la partie
-      gameToJoin.players.push({ name: name });
+      gameToJoin.players.push({ id: socket.id, name: name });
 
       // Rejoindre la room de la partie
       socket.join(id);
@@ -89,6 +95,23 @@ io.on("connection", (socket) => {
     } else {
       // Affichage dans la console
       console.log("Partie non trouvée");
+    }
+  });
+
+  // Lancement de partie
+  socket.on("startGame", (data) => {
+    console.log("2")
+    console.log('Partie lancée')
+    console.log(data)
+    console.log(data.gameId)
+    console.log(data.themeName)
+    const game = games.find((game) => game.id === data.gameId);
+    if (game) {
+      game.isGameStarted = true;
+      game.theme = data.themeName;
+      console.log("3")
+      console.log(game)
+      io.to(data.gameId).emit("clientStartGame", game);
     }
   });
 });

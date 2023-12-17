@@ -11,6 +11,8 @@ const Home = () => {
   const [game, setGame] = useState(null);
   const [themes, setThemes] = useState([]);
   const [chosenTheme, setChosenTheme] = useState(null);
+  const [themeName, setThemeName] = useState("");
+
   let name;
 
   const handleClick = (e) => {
@@ -18,7 +20,15 @@ const Home = () => {
       (theme) => theme.nom === e.target.textContent
     );
     setChosenTheme(chosenTheme);
+    setThemeName(chosenTheme.nom)
   };
+
+  const handleGameStarted = () => {
+    const socket = io("http://192.168.0.25:3001");
+    socket.emit("startGame", { gameId, themeName });
+    window.location.href = `/thematique/${chosenTheme.idThematic}/multi`;
+    console.log("1")
+  }
 
   useEffect(() => {
     const fetchThematics = async () => {
@@ -42,20 +52,23 @@ const Home = () => {
       user_data = JSON.parse(user_data);
       name = user_data.name;
     }
-    const socket = io("http://10.86.12.179:3001");
-    socket.emit("createGame", name);
+    const socket = io("http://192.168.0.25:3001");
+    socket.emit("createGame", { name, chosenTheme });
 
     socket.on("gameCreated", (newGame) => {
       console.log("Nouveau jeu créé:", newGame);
 
       setGame(newGame);
+      console.log(newGame)
       setGameId(newGame.id);
+      socket.emit("joinGame", { name, gameId: newGame.id });
     });
 
     socket.on("updateGame", (game) => {
       console.log("Vous avez rejoint la partie:", game);
       setGame(game);
     });
+
   };
 
   const renderPlayersList = () => {
@@ -105,14 +118,12 @@ const Home = () => {
               </button>
             </CopyToClipboard>
             <p>Votre thème est : {chosenTheme.nom}</p>
-            <Link
-              href="/thematique/[id]/multi"
-              as={`/thematique/${chosenTheme.idThematic}/multi`}
-            >
-              <button className="p-4 bg-red-500 text-white rounded-lg border-white border-4 font-bold">
-                Lancer la partie
-              </button>
-            </Link>
+          <button
+            onClick={handleGameStarted}
+            className="p-4 bg-red-500 text-white rounded-lg border-white border-4 font-bold"
+          >
+            Lancer la partie
+          </button>
           </div>
           {renderPlayersList()}
         </div>

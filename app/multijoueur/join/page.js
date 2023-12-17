@@ -16,13 +16,17 @@ const Join = () => {
       user_data = JSON.parse(user_data);
       name = user_data.name;
     }
-    const socket = io("http://10.86.12.179:3001");
+    const socket = io("http://192.168.0.25:3001");
     socket.emit("joinGame", { name, gameId });
 
     socket.on("updateGame", (game) => {
       console.log("Vous avez rejoint la partie:", game);
       setGame(game);
       setIsJoined(!isJoined);
+    });
+
+    socket.on("clientStartGame", (game) => {
+      window.location.href = `/thematique/${game.idTheme}/multi`;
     });
   };
 

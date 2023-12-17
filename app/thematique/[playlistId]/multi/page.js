@@ -107,14 +107,7 @@ const Page = ({ params }) => {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       {!isPlaying && !showInfo && !isFinish && (
-        <div>
-          <button
-            onClick={handleStartButton}
-            className="p-4 bg-red-500 text-white rounded-lg border-white border-4 font-bold"
-          >
-            COMMENCER LE QUIZZ ! en multi
-          </button>
-        </div>
+          handleStartButton()
       )}
 
       {isPlaying && !showInfo && !isFinish && (
